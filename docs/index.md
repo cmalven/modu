@@ -153,4 +153,4 @@ An individual module should extend `Modu` and inherits all of its common behavio
 | `getData` | Retrieve the value of a data attribute stored on the modules element | `this.getData('max')` |
 | `on` | Add a listener for events fired in another module using `.emit()` | `this.on('Counter', 'change', (newValue) => {…})` or `this.on('Counter', 'change', (newValue) => {…}, 'one')` |
 | `emit` | Broadcast an event that can be listened for by other modules using `.on()` | `this.emit('change')` or `this.emit('change', { newValue: 10 })` |
-| `call` | **Not yet implemented.** Calls a method on another module | `this.call('button')` |
+| `call` | **Not yet implemented.** Calls a method on another module | `this.call('Counter', 'change', 1, 'one')` or `this.call('Counter', 'change')` |
