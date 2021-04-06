@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modu</title>
+  </head>
+  <body>
+    <!-- Counter Example -->
+
+    <!-- Counter -->
+    <div
+      data-module-counter
+      data-counter-min="-10"
+      data-counter-max="10"
+    >
+      <button data-counter="less">Less</button>
+      <button data-counter="more">More</button>
+    </div>
+
+    <!-- Display -->
+    <div data-module-display>
+      <p data-display="count">0</p>
+    </div>
+
+    <script type="module" src="/index.js"></script>
+    <script type="module" src="/examples/examples.js"></script>
+  </body>
+</html>

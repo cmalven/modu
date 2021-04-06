@@ -4,6 +4,9 @@
   "description": "A simple, flexible system for working with DOM-based modules",
   "main": "index.js",
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs",
@@ -12,6 +15,15 @@
   "author": "Chris Malven",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.13.14",
+    "@babel/eslint-parser": "^7.13.14",
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
+    "@babel/preset-env": "^7.13.12",
+    "@babel/preset-react": "^7.13.13",
+    "@malven/eslint-config": "^1.0.3",
+    "eslint": "^7.23.0",
+    "eslint-plugin-react": "^7.23.1",
+    "vite": "^2.1.5",
     "vitepress": "^0.12.2"
   }
 }

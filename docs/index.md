@@ -24,6 +24,8 @@ npm i @malven/modu
 
 ### Create module markup
 
+The main identifier attribute for each module (e.g. `data-module-counter`) should always use a `kebab-case` version of the module name.
+
 ```html
 <!-- We'll create one module to change the count… -->
 <div
@@ -43,7 +45,7 @@ npm i @malven/modu
 
 ### Create module js
 
-Create each module in `/modules/`. Files and class names can use pascal or camel case and we'll still find the matching markup.
+Create each module in `/modules/`. Module class names and file names should always be `PascalCase.`
 
 `/modules/Counter.js`
 
@@ -118,23 +120,37 @@ class Display extends Modu {
 export default Display;
 ```
 
-###  Add module to manifest
-
-Add all modules to a manifest file in `/modules/index.js`
-
-```js
-export { default as Counter } from './Counter';
-export { default as Display } from './Display';
-```
-
 ### Initiate modules
 
-Finally, in your main `.js` file (e.g. `main.js`) create a module `app`.
+Finally, in your main `.js` file (e.g. `main.js`) create a module `app`. The only required option for `App` is `moduleDir`, which tells Modu where to attempt to import modules from.
 
 ```js
 import { App } from '@malven/modu';
-import * as modu from './modules';
 
-const app = new App();
+const app = new App({ moduleDir: './src/scripts/modules/'});
 app.init(modu);
 ```
+
+## App api
+
+An `App` helps orchestrate all collaboration between modules, including setup, teardown, and communication.
+
+| Method      | Description | Example |
+| ---------- | ----------- | --------- |
+| `init` | Initializes all modules that have a matching DOM element in the passed container | `app.init()` or `app.init(document.querySelector('header')` |
+| `destroyModules` | Destroys all modules that have a matching DOM element in the passed container | `app.destroyModules()` or `app.destroyModules(document.querySelector('header')` |
+| `update` | **Not yet implemented.** Destroys all modules that no longer have a matching DOM element in the passed container, and initializes all modules that do | `app.update()` or `app.update(document.querySelector('header')` |
+| `destroy` | **Not yet implemented.** Completely destroys the app and all modules | `app.destroy()` |
+
+## Module api
+
+An individual module should extend `Modu` and inherits all of its common behavior, including data access, DOM querying, event listening/emitting, and teardown.
+
+| Method      | Description | Example |
+| ---------- | ----------- | --------- |
+| `get` | Returns the first child element of the module that matches the passed name | `this.get('button')` |
+| `getAll` | Returns all child elements of the module that match the passed name | `this.getAll('button')` |
+| `getData` | Retrieve the value of a data attribute stored on the modules element | `this.getData('max')` |
+| `on` | Add a listener for events fired in another module using `.emit()` | `this.on('Counter', 'change', (newValue) => {…})` or `this.on('Counter', 'change', (newValue) => {…}, 'one')` |
+| `emit` | Broadcast an event that can be listened for by other modules using `.on()` | `this.emit('change')` or `this.emit('change', { newValue: 10 })` |
+| `call` | **Not yet implemented.** Calls a method on another module | `this.call('button')` |
