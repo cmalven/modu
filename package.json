@@ -1,0 +1,17 @@
+{
+  "name": "modu",
+  "version": "1.0.0",
+  "description": "A simple, flexible system for working with DOM-based modules",
+  "main": "index.js",
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:serve": "vitepress serve docs",
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "author": "Chris Malven",
+  "license": "ISC",
+  "devDependencies": {
+    "vitepress": "^0.12.2"
+  }
+}
