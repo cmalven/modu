@@ -25,6 +25,7 @@ npm i @malven/modu
 ### Create module markup
 
 ```html
+<!-- We'll create one module to change the count… -->
 <div
     data-module-counter
     data-counter-min="-10"
@@ -32,19 +33,24 @@ npm i @malven/modu
 >
     <button data-counter="less">Less</button>
     <button data-counter="more">More</button>
+</div>
 
-    <p data-counter="value">0</p>
+<!-- …and another module to display it -->
+<div data-module-display>
+    <p data-display="value">0</p>
 </div>
 ```
 
 ### Create module js
 
-Create each module in `/modules/Counter.js`. Files and class names can use whatever casing you want (pascal, camel, etc) and we'll still find the matching markup.
+Create each module in `/modules/`. Files and class names can use pascal or camel case and we'll still find the matching markup.
+
+`/modules/Counter.js`
 
 ```js
-import { modu } from '@malven/modu';
+import { Modu } from '@malven/modu';
 
-class Counter extends modu {
+class Counter extends Modu {
   constructor(m) {
     super(m);
     
@@ -53,24 +59,23 @@ class Counter extends modu {
     this.max = this.getData('max');
     this.lessEl = this.get('less');
     this.moreEl = this.get('more');
-    this.valueEl = this.get('value');
+    
+    this.handleLess = this.change.bind(this, -1);
+    this.handleMore = this.change.bind(this, 1);
   }
 
   /**
    * Will automatically be called when the module is loaded
    */
   init = () => {
-    this.lessEl.addEventListener('click', this.change.bind(this, -1));
-    this.moreEl.addEventListener('click', this.change.bind(this, 1));
+    this.lessEl.addEventListener('click', this.handleLess);
+    this.moreEl.addEventListener('click', this.handleMore);
   }
   
   change = (change) => {
     this.count += change;
     if (this.count < this.min) this.count = this.min;
     if (this.count < this.max) this.count = this.max;
-  
-    // Update the value
-    this.valueEl.innerHTML = this.count;
     
     // Broadcast the change in case any other modules are interested
     this.emit('change', this.count);
@@ -80,10 +85,37 @@ class Counter extends modu {
    * Will automatically be called when the module (or entire app) is destroyed.
    */
   destroy = () => {
-    this.lessEl.removeEventListener('click', this.change.bind(this, -1));
-    this.moreEl.removeEventListener('click', this.change.bind(this, 1));
+    this.lessEl.removeEventListener('click', this.handleLess);
+    this.moreEl.removeEventListener('click', this.handleMore);
   }
 }
+
+export default Counter;
+```
+
+`/modules/Display.js`
+
+```js
+import { Modu } from '@malven/modu';
+
+class Display extends Modu {
+  constructor(m) {
+    super(m);
+    
+    this.countEl = this.get('count');
+  }
+  
+  init = () => {
+    // Listen for count to change in `Counter` and update the value
+    this.on('Counter', 'change', (newValue) => {
+      this.countEl.innerHTML = newValue;
+    });
+  }
+  
+  destroy = () => {}
+}
+
+export default Display;
 ```
 
 ###  Add module to manifest
@@ -92,6 +124,7 @@ Add all modules to a manifest file in `/modules/index.js`
 
 ```js
 export { default as Counter } from './Counter';
+export { default as Display } from './Display';
 ```
 
 ### Initiate modules
