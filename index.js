@@ -56,9 +56,11 @@ class Modu {
 
   init() {}
 
-  destroy() {
-
-  }
+  /**
+   * This should contain any cleanup code necessary when the module is removed.
+   * It will be called automatically when certain `App` methods are called.
+   */
+  cleanup() {}
 
   /**
    * Broadcast an event that can be listened for by other modules using `.on()`
@@ -66,7 +68,7 @@ class Modu {
    * @param {any} data             Any data to associate, will be passed to the callback of `.on()`
    */
   emit(event, data) {
-    this.app.modules.forEach(({ module }) => {
+    this.app.storage.forEach(({ module }) => {
       const allListeners = module.eventListeners;
 
       // Move on if no event listeners
@@ -110,7 +112,7 @@ class App {
       moduleDir = './modules/',
     } = options;
 
-    this.modules = [];
+    this.storage = [];
     this.prefix = 'data-module-';
     this.moduleDir = moduleDir;
   }
@@ -179,7 +181,7 @@ class App {
     // Remove from list of app modules
     let idx = indexesToDestroy.length;
     while (idx--) {
-      this.modules.splice(idx, 1);
+      this.storage.splice(idx, 1);
     }
   }
 
@@ -197,7 +199,7 @@ class App {
         key,
       });
 
-      this.modules.push({
+      this.storage.push({
         module: module,
         el: element,
         key: key,
@@ -221,13 +223,13 @@ class App {
   }
 
   getModuleForElement(element) {
-    return this.modules.find(module => {
+    return this.storage.find(module => {
       return module.el === element;
     });
   }
 
   getModulesByName(name, key = null) {
-    return this.modules.filter(mod => {
+    return this.storage.filter(mod => {
       const isSameName = toKebabCase(name) === toKebabCase(mod.name);
       const isSameKey = key ? mod.key === key : true;
       return isSameName && isSameKey;

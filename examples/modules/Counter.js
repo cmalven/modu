@@ -34,7 +34,7 @@ class Counter extends Modu {
   /**
    * Will automatically be called when the module (or entire app) is destroyed.
    */
-  destroy = () => {
+  cleanup = () => {
     this.lessEl.removeEventListener('click', this.handleLess);
     this.moreEl.removeEventListener('click', this.handleMore);
   }

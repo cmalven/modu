@@ -14,7 +14,7 @@ class Display extends Modu {
     });
   }
 
-  destroy = () => {}
+  cleanup = () => {}
 }
 
 export default Display;
