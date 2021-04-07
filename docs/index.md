@@ -1,3 +1,7 @@
+---
+title: Modu / Simple, flexible DOM-based modules
+---
+
 # Modu
 
 `@malven/modu` provides a simple system for working with DOM-based modules that is powerful and flexible.
@@ -122,7 +126,7 @@ export default Display;
 
 ### Initiate modules
 
-Finally, in your main `.js` file (e.g. `main.js`) create a module `app`. The only required option for `App` is `moduleDir`, which tells Modu where to attempt to import modules from.
+Finally, in your main `.js` file (e.g. `main.js`) create a module `App`. The only required option for `App` is `moduleDir`, which tells Modu where to attempt to import modules from.
 
 ```js
 import { App } from '@malven/modu';
@@ -137,10 +141,10 @@ An `App` helps orchestrate all collaboration between modules, including setup, t
 
 | Method      | Description | Example |
 | ---------- | ----------- | --------- |
-| `init` | Initializes all modules that have a matching DOM element in the passed container | `app.init()` or `app.init(document.querySelector('header')` |
-| `destroyModules` | Destroys all modules that have a matching DOM element in the passed container | `app.destroyModules()` or `app.destroyModules(document.querySelector('header')` |
-| `update` | **Not yet implemented.** Destroys all modules that no longer have a matching DOM element in the passed container, and initializes all modules that do | `app.update()` or `app.update(document.querySelector('header')` |
-| `destroy` | **Not yet implemented.** Completely destroys the app and all modules | `app.destroy()` |
+| `init(containerEl = document)` | Initializes all modules within a container | `app.init()` or `app.init(document.querySelector('.header')` |
+| `destroyModules(containerEl = document)` | Destroys all modules within a container | `app.destroyModules()` or `app.destroyModules(document.querySelector('.header')` |
+| `update(containerEl = document)` | **Not yet implemented.** Destroys all modules that no longer exist within a container, and initializes any new modules that do | `app.update()` or `app.update(document.querySelector('header')` |
+| `destroy()` | **Not yet implemented.** Completely destroys the app and all modules | `app.destroy()` |
 
 ## Module api
 
@@ -148,9 +152,9 @@ An individual module should extend `Modu` and inherits all of its common behavio
 
 | Method      | Description | Example |
 | ---------- | ----------- | --------- |
-| `get` | Returns the first child element of the module that matches the passed name | `this.get('button')` |
-| `getAll` | Returns all child elements of the module that match the passed name | `this.getAll('button')` |
-| `getData` | Retrieve the value of a data attribute stored on the modules element | `this.getData('max')` |
-| `on` | Add a listener for events fired in another module using `.emit()` | `this.on('Counter', 'change', (newValue) => {…})` or `this.on('Counter', 'change', (newValue) => {…}, 'one')` |
-| `emit` | Broadcast an event that can be listened for by other modules using `.on()` | `this.emit('change')` or `this.emit('change', { newValue: 10 })` |
-| `call` | **Not yet implemented.** Calls a method on another module | `this.call('Counter', 'change', 1, 'one')` or `this.call('Counter', 'change')` |
+| `get(name)` | Returns the first child element of the module that matches the passed name | `this.get('button')` |
+| `getAll(name)` | Returns all child elements of the module that match the passed name | `this.getAll('button')` |
+| `getData(name)` | Retrieve the value of a data attribute stored on the modules element | `this.getData('max')` |
+| `on(module, event, callback, key = null)` | Add a listener for events fired in another module using `.emit()` | `this.on('Counter', 'change', (newValue) => {…})` or `this.on('Counter', 'change', (newValue) => {…}, 'one')` |
+| `emit(event, data = null)` | Broadcast an event that can be listened for by other modules using `.on()` | `this.emit('change')` or `this.emit('change', { newValue: 10 })` |
+| `call(module, method, parameters = null, key = null)` | **Not yet implemented.** Calls a method on another module | `this.call('Counter', 'change', 1, 'one')` or `this.call('Counter', 'change')` |
