@@ -1,5 +1,5 @@
 {
-  "name": "modu",
+  "name": "@malven/modu",
   "version": "1.0.0",
   "description": "A simple, flexible system for working with DOM-based modules",
   "main": "index.js",
