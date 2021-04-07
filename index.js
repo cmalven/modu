@@ -135,12 +135,18 @@ class Modu {
 class App {
   constructor(options = {}) {
     const {
-      modulePath = './modules/',
+      importMethod,
     } = options;
 
     this.storage = [];
     this.prefix = 'data-module-';
-    this.modulePath = modulePath;
+
+    // Error if no import method is set
+    if (typeof importMethod !== 'function') {
+      console.error('Modu.App() is missing an "importMethod" option which is used to determine how to import modules.');
+    }
+
+    this.importMethod = importMethod;
   }
 
   /**
@@ -218,8 +224,7 @@ class App {
     // Dynamically import the element
     const { name, key } = this.getModuleNameFromElement(element);
     const pascalName = toPascalCase(name);
-    const importPath = `${this.modulePath}${pascalName}.js`;
-    import(/* @vite-ignore */ importPath).then(Mod => {
+    this.importMethod(pascalName).then(Mod => {
       const module = new Mod.default({
         el: element,
         app: this,
@@ -236,7 +241,7 @@ class App {
 
       // Initiate the module
       module.init();
-    }).catch(() => console.error(`An error occurred while loading the module "${pascalName}"`));
+    }).catch((error) => console.log(error));
   }
 
   getModuleNameFromElement(element) {

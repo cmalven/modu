@@ -3,6 +3,6 @@ import './style.css';
 import { App } from '../index';
 
 const app = new App({
-  modulePath: './examples/modules/',
+  importMethod: module => import('./modules/' + module + '.js'),
 });
 app.init();
