@@ -208,8 +208,8 @@ class App {
     const { name, key } = this.getModuleNameFromElement(element);
     const pascalName = toPascalCase(name);
     const importPath = `${this.moduleDir}/${pascalName}.js`;
-    import(/* @vite-ignore */ importPath).then(({ default: Mod }) => {
-      const module = new Mod({
+    import(/* @vite-ignore */ importPath).then(Mod => {
+      const module = new Mod.default({
         el: element,
         app: this,
         name,
