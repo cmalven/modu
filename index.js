@@ -211,6 +211,10 @@ class App {
   }
 
   initModule(element) {
+    // Look for an existing module already created for this element
+    const existingModule = this.getModuleForElement(element);
+    if (existingModule) return;
+
     // Dynamically import the element
     const { name, key } = this.getModuleNameFromElement(element);
     const pascalName = toPascalCase(name);
