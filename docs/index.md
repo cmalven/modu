@@ -155,7 +155,6 @@ Every module can specify a `key` in the markup, which makes it possible to scope
 this.on('ModalTrigger', 'click', this.open, this.key); // `this.key` will be `main`
 ```
 
-
 ## APIs
 
 ### App
