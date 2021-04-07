@@ -127,7 +127,7 @@ class Modu {
         params = [params];
       }
 
-      moduleMethod.apply(module, params);
+      return moduleMethod.apply(module, params);
     });
   }
 }
@@ -152,6 +152,13 @@ class App {
 
     // Init modules for all elements
     this.initModulesForElements(elements);
+  }
+
+  /**
+   * Destroy the app and all modules
+   */
+  destroy() {
+    this.destroyModules();
   }
 
   /**
@@ -190,7 +197,7 @@ class App {
       const module = this.getModuleForElement(el);
 
       // Destroy the module
-      module.module.destroy();
+      module.module.cleanup();
 
       // Add to the indexes to destroy
       indexesToDestroy.push(idx);

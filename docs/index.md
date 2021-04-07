@@ -166,8 +166,7 @@ An `App` helps orchestrate all collaboration between modules, including setup, t
 | ---------- | ----------- | --------- |
 | `init(containerEl = document)` | Initializes all modules within a container | `app.init()` or `app.init(document.querySelector('.header')` |
 | `destroyModules(containerEl = document)` | Destroys all modules within a container | `app.destroyModules()` or `app.destroyModules(document.querySelector('.header')` |
-| `update(containerEl = document)` | **Not yet implemented.** Destroys all modules that no longer exist within a container, and initializes any new modules that do | `app.update()` or `app.update(document.querySelector('header')` |
-| `destroy()` | **Not yet implemented.** Completely destroys the app and all modules | `app.destroy()` |
+| `destroy()` | Completely destroys the app and all modules | `app.destroy()` |
 
 ### Module
 
