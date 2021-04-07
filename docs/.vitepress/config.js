@@ -1,4 +1,4 @@
 module.exports = {
   title: 'Modu',
-  description: 'Efficient, simple, flexible DOM modules',
+  description: 'Simple, flexible DOM modules',
 }

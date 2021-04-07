@@ -1,5 +1,5 @@
 ---
-title: Modu / Simple, flexible DOM-based modules
+title: Simple, flexible DOM-based modules
 ---
 
 # Modu
