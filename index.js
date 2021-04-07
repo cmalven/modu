@@ -218,7 +218,7 @@ class App {
     // Dynamically import the element
     const { name, key } = this.getModuleNameFromElement(element);
     const pascalName = toPascalCase(name);
-    const importPath = `${this.modulePath}/${pascalName}.js`;
+    const importPath = `${this.modulePath}${pascalName}.js`;
     import(/* @vite-ignore */ importPath).then(Mod => {
       const module = new Mod.default({
         el: element,
