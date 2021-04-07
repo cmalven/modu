@@ -8,17 +8,13 @@ class Display extends Modu {
   }
 
   init = () => {
-    console.log('Display Init');
-
     // Listen for count to change in `Counter` and update the value
     this.on('Counter', 'change', (newValue) => {
       this.countEl.innerHTML = newValue;
     });
   }
 
-  destroy = () => {
-    console.log('Destroy Display');
-  }
+  destroy = () => {}
 }
 
 export default Display;

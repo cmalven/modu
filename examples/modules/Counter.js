@@ -12,15 +12,12 @@ class Counter extends Modu {
 
     this.handleLess = this.change.bind(this, -1);
     this.handleMore = this.change.bind(this, 1);
-
-    console.log(this);
   }
 
   /**
    * Will automatically be called when the module is loaded
    */
   init = () => {
-    console.log('Counter init');
     this.lessEl.addEventListener('click', this.handleLess);
     this.moreEl.addEventListener('click', this.handleMore);
   }
@@ -29,7 +26,6 @@ class Counter extends Modu {
     this.count += change;
     if (this.count < this.min) this.count = this.min;
     if (this.count > this.max) this.count = this.max;
-    console.log(this.count);
 
     // Broadcast the change in case any other modules are interested
     this.emit('change', this.count);
@@ -39,8 +35,6 @@ class Counter extends Modu {
    * Will automatically be called when the module (or entire app) is destroyed.
    */
   destroy = () => {
-    console.log('Destroy Counter');
-
     this.lessEl.removeEventListener('click', this.handleLess);
     this.moreEl.removeEventListener('click', this.handleMore);
   }
