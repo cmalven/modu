@@ -103,6 +103,33 @@ class Modu {
       key,
     });
   }
+
+  /**
+   * Calls a method on another module
+   * @param {string} module                          The PascalCase name of the module to call
+   * @param {string} method                          The name of the method to call
+   * @param {Object | string | number} params        Optional parameters to pass to the method. If an array is passed, each item in the array will be passed as a separate parameter. To pass an array as the only parameter, wrap it in double brackets, e.g. [[1, 2]]
+   * @param {string} key                             An optional key to scope the module to
+   */
+  call(module, method, params = null, key = null) {
+    // Get all modules that match the name and key
+    const modules = this.app.getModulesByName(module, key);
+
+    // Call the method on each module
+    modules.forEach(({ module }) => {
+      const moduleMethod = module[method];
+      if (typeof moduleMethod !== 'function') {
+        return console.error(`Failed to call non-existant method "${method}" on module "${module}"`);
+      }
+
+      // Always pass params as an array
+      if (params && params.constructor !== Array) {
+        params = [params];
+      }
+
+      moduleMethod.apply(module, params);
+    });
+  }
 }
 
 class App {
@@ -195,8 +222,6 @@ class App {
         module,
         key,
       });
-
-      console.log(this.storage);
 
       // Initiate the module
       module.init();
