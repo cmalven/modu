@@ -126,12 +126,12 @@ export default Display;
 
 ### Initiate modules
 
-Finally, in your main `.js` file (e.g. `main.js`) create a module `App`. The only required option for `App` is `moduleDir`, which tells Modu where to attempt to import modules from.
+Finally, in your main `.js` file (e.g. `main.js`) create a module `App`. The only required option for `App` is `modulePath`, which tells Modu where to attempt to import modules from.
 
 ```js
 import { App } from '@malven/modu';
 
-const app = new App({ moduleDir: './src/scripts/modules/'});
+const app = new App({ modulePath: './src/scripts/modules/'});
 app.init(modu);
 ```
 

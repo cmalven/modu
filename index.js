@@ -135,12 +135,12 @@ class Modu {
 class App {
   constructor(options = {}) {
     const {
-      moduleDir = './modules/',
+      modulePath = './modules/',
     } = options;
 
     this.storage = [];
     this.prefix = 'data-module-';
-    this.moduleDir = moduleDir;
+    this.modulePath = modulePath;
   }
 
   /**
@@ -218,7 +218,7 @@ class App {
     // Dynamically import the element
     const { name, key } = this.getModuleNameFromElement(element);
     const pascalName = toPascalCase(name);
-    const importPath = `${this.moduleDir}/${pascalName}.js`;
+    const importPath = `${this.modulePath}/${pascalName}.js`;
     import(/* @vite-ignore */ importPath).then(Mod => {
       const module = new Mod.default({
         el: element,
