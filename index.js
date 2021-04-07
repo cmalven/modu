@@ -18,13 +18,12 @@ const toPascalCase = (name) => {
 
 class Modu {
   constructor(options) {
-    this.name = options.name;
-    this.elementPrefix = 'data-' + options.name;
-    this.dataPrefix = 'data-' + options.name + '-';
-    this.key = options.key;
-    this.el = options.el;
-    this.eventListeners = [];
-    this.app = options.app;
+    Object.assign(this, {
+      ...options,
+      eventListeners: [],
+      elementPrefix: 'data-' + options.name,
+      dataPrefix: 'data-' + options.name + '-',
+    });
   }
 
   /**
@@ -142,18 +141,10 @@ class App {
   getModuleElements(containerEl = document) {
     const allElements = containerEl.querySelectorAll('*');
     return Array.from(allElements).filter(el => {
-      const { name, key } = this.getModuleNameFromElement(el);
+      const { name } = this.getModuleNameFromElement(el);
 
       // Move on if the element doesn't have a module name
       if (!name) return false;
-
-      // Move on if we already have this module initialized with the same key
-      if (key) {
-        if (this.getModulesByName(name, key).length) {
-          console.warn(`A ${toPascalCase(name)} module with the key "${key}" already exists.`);
-          return false;
-        }
-      }
 
       return true;
     });
@@ -191,7 +182,6 @@ class App {
     const pascalName = toPascalCase(name);
     const importPath = `${this.moduleDir}/${pascalName}.js`;
     import(/* @vite-ignore */ importPath).then(({ default: Mod }) => {
-      // Foo can be used here with `new Foo()`
       const module = new Mod({
         el: element,
         app: this,
@@ -200,10 +190,13 @@ class App {
       });
 
       this.storage.push({
-        module: module,
         el: element,
-        key: key,
+        name,
+        module,
+        key,
       });
+
+      console.log(this.storage);
 
       // Initiate the module
       module.init();
