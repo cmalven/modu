@@ -135,7 +135,30 @@ const app = new App({ moduleDir: './src/scripts/modules/'});
 app.init(modu);
 ```
 
-## App api
+## Details
+
+### Keys
+
+Every module can specify a `key` in the markup, which makes it possible to scope events and calls to that specific key.
+
+```html
+<button data-module-modal-trigger="main">Open Modal</button>
+
+<div data-module-modal="main">
+    <p>Modal content goes here.</p>
+</div>
+```
+
+```js
+// in /modules/Modal.js
+// Only listen specifically for `click` events on a `ModalTrigger` that has a key of `main`
+this.on('ModalTrigger', 'click', this.open, this.key); // `this.key` will be `main`
+```
+
+
+## APIs
+
+### App
 
 An `App` helps orchestrate all collaboration between modules, including setup, teardown, and communication.
 
@@ -146,7 +169,7 @@ An `App` helps orchestrate all collaboration between modules, including setup, t
 | `update(containerEl = document)` | **Not yet implemented.** Destroys all modules that no longer exist within a container, and initializes any new modules that do | `app.update()` or `app.update(document.querySelector('header')` |
 | `destroy()` | **Not yet implemented.** Completely destroys the app and all modules | `app.destroy()` |
 
-## Module api
+### Module
 
 An individual module should extend `Modu` and inherits all of its common behavior, including data access, DOM querying, event listening/emitting, and teardown.
 
