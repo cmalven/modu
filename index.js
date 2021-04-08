@@ -139,6 +139,7 @@ class App {
     } = options;
 
     this.storage = [];
+    this.modulesReady = null;
     this.prefix = 'data-module-';
 
     // Error if no import method is set
@@ -191,9 +192,11 @@ class App {
   }
 
   initModulesForElements(elements) {
-    elements.forEach(el => {
-      this.initModule(el);
-    });
+    const modulePromises = elements.map(el => {
+      return this.initModule(el);
+    })
+
+    this.modulesReady = Promise.allSettled(modulePromises);
   }
 
   destroyModulesForElements(elements) {
@@ -217,31 +220,38 @@ class App {
   }
 
   initModule(element) {
-    // Look for an existing module already created for this element
-    const existingModule = this.getModuleForElement(element);
-    if (existingModule) return;
+    return new Promise((res, rej) => {
+      // Look for an existing module already created for this element
+      const existingModule = this.getModuleForElement(element);
+      if (existingModule) return res();
 
-    // Dynamically import the element
-    const { name, key } = this.getModuleNameFromElement(element);
-    const pascalName = toPascalCase(name);
-    this.importMethod(pascalName).then(Mod => {
-      const module = new Mod.default({
-        el: element,
-        app: this,
-        name,
-        key,
+      // Dynamically import the element
+      const { name, key } = this.getModuleNameFromElement(element);
+      const pascalName = toPascalCase(name);
+      this.importMethod(pascalName).then(Mod => {
+        const module = new Mod.default({
+          el: element,
+          app: this,
+          name,
+          key,
+        });
+
+        this.storage.push({
+          el: element,
+          name,
+          module,
+          key,
+        });
+
+        // Initiate the module
+        module.init();
+
+        res(module);
+      }).catch((error) => {
+        console.log(error);
+        rej();
       });
-
-      this.storage.push({
-        el: element,
-        name,
-        module,
-        key,
-      });
-
-      // Initiate the module
-      module.init();
-    }).catch((error) => console.log(error));
+    });
   }
 
   getModuleNameFromElement(element) {
