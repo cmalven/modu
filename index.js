@@ -130,6 +130,9 @@ class Modu {
 
     // Call the method on each module
     modules.forEach(({ module }) => {
+      // Module can't call a method on itself
+      if (module.el === this.el && module.name === this.name) return;
+
       const moduleMethod = module[method];
       if (typeof moduleMethod !== 'function') {
         return console.error(`Failed to call non-existant method "${method}" on module "${module}"`);

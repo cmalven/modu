@@ -190,6 +190,17 @@ describe('Modu', () => {
       expect(callbackStub).calledTwice;
       assert.deepEqual(callbackStub.args, [['hello'], ['modu']]);
     });
+
+    it('does not repond to events emitted by itself', async () => {
+      await app.modulesReady;
+      const counter = app.getModulesByName('counter')[0].module;
+
+      const callbackStub = sinon.stub();
+      counter.on('Counter', 'change', callbackStub);
+
+      counter.emit('change', 'hello');
+      expect(callbackStub).not.called;
+    });
   });
 
   describe('call()', () => {
@@ -217,6 +228,18 @@ describe('Modu', () => {
       expect(displayTwoMethod).calledOnce;
       assert.deepEqual(displayOneMethod.args, [['all displays'], ['main display']]);
       assert.deepEqual(displayTwoMethod.args, [['all displays']]);
+    });
+
+    it('does not call methods on itself', async () => {
+      await app.modulesReady;
+      const counter = app.getModulesByName('counter')[0].module;
+
+      const counterMethod = sinon.spy(counter, 'change');
+
+      // Counter calls all displays
+      counter.call('Counter', 'change', 'counter was updated');
+
+      expect(counterMethod).not.called;
     });
   });
 });
