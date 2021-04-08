@@ -9,9 +9,11 @@ class Display extends Modu {
 
   init = () => {
     // Listen for count to change in `Counter` and update the value
-    this.on('Counter', 'change', (newValue) => {
-      this.countEl.innerHTML = newValue;
-    });
+    this.on('Counter', 'change', this.update);
+  }
+
+  update = newValue => {
+    this.countEl.innerHTML = newValue;
   }
 
   cleanup = () => {}
