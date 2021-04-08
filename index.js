@@ -139,7 +139,7 @@ class Modu {
       }
 
       // Always pass params as an array
-      if (params && params.constructor !== Array) {
+      if (params !== null && params.constructor !== Array) {
         params = [params];
       }
 
