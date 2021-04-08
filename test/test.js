@@ -48,28 +48,25 @@ describe('App', () => {
       app = initApp();
     });
 
-    it('creates app and initializes modules', () => {
-      // assert.equal(typeof app.modulesReady, 'Promise');
+    it('creates app and initializes modules', async () => {
       assert.isArray(app.storage);
       assert.lengthOf(app.storage, 0);
 
       // Modules should be ready after a short wait
-      return app.modulesReady.then(result => {
-        assert.lengthOf(app.storage, 2);
-        assert.lengthOf(result, 2);
-      });
-
+      const result = await app.modulesReady;
+      assert.lengthOf(app.storage, 2);
+      assert.lengthOf(result, 2);
     });
 
-    it('does not duplicate existing modules if called twice', () => {
-      return app.modulesReady.then(() => {
-        assert.lengthOf(app.storage, 2);
-        app.init();
+    it('does not duplicate existing modules if called twice', async () => {
+      await app.modulesReady;
+      assert.lengthOf(app.storage, 2);
 
-        return app.modulesReady.then(() => {
-          assert.lengthOf(app.storage, 2);
-        });
-      });
+      // Run init() again
+      app.init();
+
+      await app.modulesReady;
+      assert.lengthOf(app.storage, 2);
     });
   });
 });
