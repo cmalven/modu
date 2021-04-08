@@ -138,7 +138,7 @@ import { App } from '@malven/modu';
 const app = new App({
   importMethod: module => import('./modules/' + module + '.js'),
 });
-app.init(modu);
+app.init();
 ```
 
 ## Details
