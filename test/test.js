@@ -5,6 +5,7 @@ import {assert, expect} from 'chai';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinonChai from 'sinon-chai';
+import {toKebabCase, toPascalCase} from '../dist/modu.es.js';
 
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
@@ -216,6 +217,49 @@ describe('Modu', () => {
       expect(displayTwoMethod).calledOnce;
       assert.deepEqual(displayOneMethod.args, [['all displays'], ['main display']]);
       assert.deepEqual(displayTwoMethod.args, [['all displays']]);
+    });
+  });
+});
+
+describe('Utils', () => {
+  const kebabName = 'some-name';
+  const pascalName = 'SomeName';
+  const camelName = 'someName';
+  const snakeName = 'some_name';
+
+  describe('toKebabCase()', () => {
+    it('converts kebab-case', () => {
+      assert.equal(toKebabCase(kebabName), kebabName);
+    });
+
+    it('converts PascalCase', () => {
+      assert.equal(toKebabCase(pascalName), kebabName);
+    });
+
+    it('converts camelCase', () => {
+      assert.equal(toKebabCase(camelName), kebabName);
+    });
+
+    it('converts snake_case', () => {
+      assert.equal(toKebabCase(snakeName), kebabName);
+    });
+  });
+
+  describe('toPascalCase()', () => {
+    it('converts kebab-case', () => {
+      assert.equal(toPascalCase(kebabName), pascalName);
+    });
+
+    it('converts PascalCase', () => {
+      assert.equal(toPascalCase(pascalName), pascalName);
+    });
+
+    it('converts camelCase', () => {
+      assert.equal(toPascalCase(camelName), pascalName);
+    });
+
+    it('converts snake_case', () => {
+      assert.equal(toPascalCase(snakeName), pascalName);
     });
   });
 });

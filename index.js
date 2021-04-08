@@ -2,18 +2,31 @@
  * Converts name of a module to kebab case
  * @param {string} name
  */
-const toKebabCase = (name) => {
-  const upper = /(?:(?<!\p{Uppercase_Letter})\p{Uppercase_Letter}|\p{Uppercase_Letter}(?!\p{Uppercase_Letter}))/gu;
-  return name.replace(upper, '-$&').replace(/^-/, '').toLowerCase();
+export const toKebabCase = (name) => {
+  return name
+    .split('')
+    .map((letter) => {
+      if (/[A-Z]/.test(letter)) {
+        return ` ${letter.toLowerCase()}`
+      }
+      return letter
+    })
+    .join('')
+    .trim()
+    .replace(/[_\s]+/g, '-')
 };
 
 /**
  * Converts all all casings of a module name to be consistent
  * @param {string} name
  */
-const toPascalCase = (name) => {
-  return name.replace(/(\w)(\w*)/g,
-    function(g0, g1, g2) { return g1.toUpperCase() + g2.toLowerCase(); });
+export const toPascalCase = (name) => {
+  return toKebabCase(name)
+    .split('-')
+    .map(word => {
+      return word.slice(0, 1).toUpperCase() + word.slice(1)
+    })
+    .join('')
 };
 
 class Modu {
