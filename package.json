@@ -11,7 +11,7 @@
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs",
     "test": "npm run build && mocha --require @babel/register",
-    "test:dev": "chokidar 'index.js' 'test/**/*.js' '**/*.html' -c 'clear && npm run test'"
+    "test:dev": "npm run test && chokidar 'index.js' 'test/**/*.js' '**/*.html' -c 'clear && npm run test'"
   },
   "author": "Chris Malven",
   "license": "ISC",
