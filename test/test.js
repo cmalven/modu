@@ -6,6 +6,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinonChai from 'sinon-chai';
 import {toKebabCase, toPascalCase} from '../dist/modu.es.js';
+import * as initialModules from '../examples/modules/initial';
 
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
@@ -13,6 +14,15 @@ chai.use(sinonChai);
 const initApp = () => {
   const app = new App({
     importMethod: module => import('../examples/modules/' + module + '.js'),
+  });
+  app.init();
+  return app;
+}
+
+const initAppInitial = () => {
+  const app = new App({
+    importMethod: module => import('../examples/modules/' + module + '.js'),
+    initialModules,
   });
   app.init();
   return app;
@@ -77,6 +87,24 @@ describe('App', () => {
 
       await app.modulesReady;
       assert.lengthOf(app.storage, 3);
+    });
+  });
+
+  describe('init() with initial modules', () => {
+    let app;
+
+    beforeEach(() => {
+      getCounterDom();
+      app = initAppInitial();
+    });
+
+    it('immediately initializes initial modules', async () => {
+      assert.lengthOf(app.storage, 1);
+
+      // Modules should be ready after a short wait
+      const result = await app.modulesReady;
+      assert.lengthOf(app.storage, 3);
+      assert.lengthOf(result, 3);
     });
   });
 

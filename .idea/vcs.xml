@@ -4,7 +4,6 @@
     <option name="branchProtectionPatterns">
       <list>
         <option value="main" />
-        <option value="next" />
       </list>
     </option>
   </component>

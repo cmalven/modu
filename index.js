@@ -152,10 +152,12 @@ class App {
   constructor(options = {}) {
     const {
       importMethod,
+      initialModules = {},
     } = options;
 
     this.storage = [];
     this.modulesReady = null;
+    this.initialModules = initialModules;
     this.prefix = 'data-module-';
 
     // Error if no import method is set
@@ -241,33 +243,55 @@ class App {
       const existingModule = this.getModuleForElement(element);
       if (existingModule) return res();
 
-      // Dynamically import the element
+      // Get the name of the module
       const { name, key } = this.getModuleNameFromElement(element);
       const pascalName = toPascalCase(name);
+
+      // If the module is available in out list of "initial" modules,
+      // then it is already imported and can be initiated right now
+      const InitialModule = this.initialModules[pascalName];
+      if (InitialModule) {
+        const module = this.addModule(InitialModule, { element, name, key });
+        return res(module);
+      }
+
+      // Dynamically import the element
       this.importMethod(pascalName).then(Mod => {
-        const module = new Mod.default({
-          el: element,
-          app: this,
-          name,
-          key,
-        });
-
-        this.storage.push({
-          el: element,
-          name,
-          module,
-          key,
-        });
-
-        // Initiate the module
-        module.init();
-
+        const module = this.addModule(Mod.default, { element, name, key });
         res(module);
       }).catch((error) => {
         console.log(error);
         rej();
       });
     });
+  }
+
+  addModule(ImportedModule, details = {}) {
+    const {
+      element,
+      name,
+      key,
+    } = details;
+
+    const module = new ImportedModule({
+      el: element,
+      app: this,
+      name,
+      key,
+    });
+
+    this.storage.push({
+      el: element,
+      name,
+      module,
+      key,
+    });
+
+    // Initiate the module
+    module.init();
+
+    // Return the added module
+    return module;
   }
 
   getModuleNameFromElement(element) {

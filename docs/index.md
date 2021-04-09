@@ -161,6 +161,36 @@ Every module can specify a `key` in the markup, which makes it possible to scope
 this.on('ModalTrigger', 'click', this.open, this.key); // `this.key` will be `main`
 ```
 
+### Initial Modules
+
+By default, Modu will automatically use _dynamic imports_ for all modules, which means they won't be included in the initial javascript bundle and will instead be loaded only if they're included on each page. This does mean that there may be a short delay between the time the page and main javascript bundle loads and the time each dynamically imported module is ready.
+
+For modules that are critical to the initial load of the page, it might make sense to include these modules in the initial javascript bundle, and Modu allows you to specify which modules should be included this way through the `initialModules` option on `App`.
+
+To take advantage of this, do the following:
+
+- First, created an `initial.js` file inside of your `modules` directory. This file should import all modules that you want to be imported into the initial bundle:
+
+```js
+// in /modules/initial.js
+export { default as Counter } from './Counter';
+export { default as Display } from './Display';
+```
+
+2. Next, import `initial.js` into your main javascript file and include it when creating `App`
+
+```js
+// in /main.js`
+import * as initialModules from './modules/initial';
+
+const app = new App({
+  initialModules,
+  importMethod: module => import('./modules/' + module + '.js'),
+});
+app.init();
+
+```
+
 ## APIs
 
 ### App
