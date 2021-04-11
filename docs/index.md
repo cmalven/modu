@@ -177,7 +177,7 @@ export { default as Counter } from './Counter';
 export { default as Display } from './Display';
 ```
 
-2. Next, import `initial.js` into your main javascript file and include it when creating `App`
+- Next, import `initial.js` into your main javascript file and include it when creating `App`
 
 ```js
 // in /main.js`
