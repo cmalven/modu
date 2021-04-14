@@ -146,6 +146,15 @@ class Modu {
       return moduleMethod.apply(module, params);
     });
   }
+
+  /**
+   * Returns a DOM selector for an element name contained within the module.
+   * @param {string} name
+   * @returns {string}
+   */
+  getSelector(name) {
+    return `[${this.elementPrefix}="${name}"]`;
+  }
 }
 
 class App {

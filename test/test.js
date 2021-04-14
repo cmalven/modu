@@ -270,6 +270,29 @@ describe('Modu', () => {
       expect(counterMethod).not.called;
     });
   });
+
+  describe('getSelector()', () => {
+    let app;
+
+    beforeEach(() => {
+      getCounterDom();
+      app = initApp();
+    });
+
+    it('returns the selector for an element', async () => {
+      await app.modulesReady;
+      const counter = app.getModulesByName('counter')[0].module;
+      const display = app.getModulesByName('display')[0].module;
+      const counterLessSel = counter.getSelector('less');
+      const counterMoreSel = counter.getSelector('more');
+      const displayCountSel = display.getSelector('count');
+
+      assert.equal(counterLessSel, '[data-counter="less"]');
+      assert.equal(counterMoreSel, '[data-counter="more"]');
+      assert.equal(displayCountSel, '[data-display="count"]');
+    });
+
+  });
 });
 
 describe('Utils', () => {
