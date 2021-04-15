@@ -45,7 +45,7 @@ The main identifier attribute for each module (e.g. `data-module-counter`) shoul
 
 <!-- …and another module to display it -->
 <div data-module-display>
-    <p data-display="value">0</p>
+    <p data-display="count">0</p>
 </div>
 ```
 
@@ -63,8 +63,8 @@ class Counter extends Modu {
     super(m);
     
     this.count = 0;
-    this.min = this.getData('min');
-    this.max = this.getData('max');
+    this.min = Number(this.getData('min'));
+    this.max = Number(this.getData('max'));
     this.lessEl = this.get('less');
     this.moreEl = this.get('more');
     
@@ -83,7 +83,7 @@ class Counter extends Modu {
   change = (change) => {
     this.count += change;
     if (this.count < this.min) this.count = this.min;
-    if (this.count < this.max) this.count = this.max;
+    if (this.count > this.max) this.count = this.max;
     
     // Broadcast the change in case any other modules are interested
     this.emit('change', this.count);
