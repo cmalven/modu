@@ -209,10 +209,10 @@ class App {
   getModuleElements(containerEl = document) {
     const allElements = containerEl.querySelectorAll('*');
     return Array.from(allElements).filter(el => {
-      const { name } = this.getModuleNameFromElement(el);
+      const names = this.getModuleNamesFromElement(el);
 
       // Move on if the element doesn't have a module name
-      if (!name) return false;
+      if (!names.length) return false;
 
       return true;
     });
@@ -220,7 +220,7 @@ class App {
 
   initModulesForElements(elements) {
     const modulePromises = elements.map(el => {
-      return this.initModule(el);
+      return this.initModules(el);
     })
 
     this.modulesReady = Promise.allSettled(modulePromises);
@@ -230,10 +230,12 @@ class App {
     let indexesToDestroy = [];
 
     elements.forEach((el, idx) => {
-      const module = this.getModuleForElement(el);
+      const modules = this.getModulesForElement(el);
 
       // Destroy the module
-      module.module.cleanup();
+      modules.forEach(module => {
+        module.module.cleanup();
+      })
 
       // Add to the indexes to destroy
       indexesToDestroy.push(idx);
@@ -246,33 +248,42 @@ class App {
     }
   }
 
-  initModule(element) {
-    return new Promise((res, rej) => {
-      // Look for an existing module already created for this element
-      const existingModule = this.getModuleForElement(element);
-      if (existingModule) return res();
+  initModules(element) {
+    let readyPromises = [];
 
-      // Get the name of the module
-      const { name, key } = this.getModuleNameFromElement(element);
-      const pascalName = toPascalCase(name);
+    // Get all names for the element
+    const names = this.getModuleNamesFromElement(element);
+    names.forEach(({ name, key}) => {
+      // console.log(name);
+      // console.log(key);
+      return new Promise((res, rej) => {
+        // Look for an existing module already created for this element
+        const existingModules = this.getModulesForElement(element, name);
+        if (existingModules.length) return readyPromises.push(res());
 
-      // If the module is available in out list of "initial" modules,
-      // then it is already imported and can be initiated right now
-      const InitialModule = this.initialModules[pascalName];
-      if (InitialModule) {
-        const module = this.addModule(InitialModule, { element, name, key });
-        return res(module);
-      }
+        // Get the name of the module
+        const pascalName = toPascalCase(name);
 
-      // Dynamically import the element
-      this.importMethod(pascalName).then(Mod => {
-        const module = this.addModule(Mod.default, { element, name, key });
-        res(module);
-      }).catch((error) => {
-        console.log(error);
-        rej();
+        // If the module is available in out list of "initial" modules,
+        // then it is already imported and can be initiated right now
+        const InitialModule = this.initialModules[pascalName];
+        if (InitialModule) {
+          const module = this.addModule(InitialModule, { element, name, key });
+          return res(module);
+        }
+
+        // Dynamically import the element
+        this.importMethod(pascalName).then(Mod => {
+          const module = this.addModule(Mod.default, { element, name, key });
+          res(module);
+        }).catch((error) => {
+          console.log(error);
+          rej();
+        });
       });
     });
+
+    return Promise.all(readyPromises);
   }
 
   addModule(ImportedModule, details = {}) {
@@ -303,21 +314,26 @@ class App {
     return module;
   }
 
-  getModuleNameFromElement(element) {
-    let result = { name: null, key: null };
+  getModuleNamesFromElement(element) {
+    let results = [];
 
     Array.from(element.attributes).forEach(attr => {
       if (attr.name.startsWith(this.prefix)) {
-        result = { name: attr.name.replace(this.prefix, ''), key: attr.value };
+        results.push({
+          name: attr.name.replace(this.prefix, ''),
+          key: attr.value,
+        });
       }
     });
 
-    return result;
+    return results;
   }
 
-  getModuleForElement(element) {
-    return this.storage.find(module => {
-      return module.el === element;
+  getModulesForElement(element, name = null) {
+    return this.storage.filter(module => {
+      const isSameElement = module.el === element;
+      const isSameName = name ? module.name === name : true;
+      return isSameElement && isSameName;
     });
   }
 

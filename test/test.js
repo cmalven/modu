@@ -59,6 +59,21 @@ const getCounterDom = () => {
   global.document = dom.window.document;
 }
 
+const getBodyDom = () => {
+  const dom = new JSDOM(
+    `<html>
+       <body
+         data-module-resizer
+         data-module-scroller
+       >
+       </body>
+     </html>`,
+    {url: 'http://localhost'},
+  );
+  global.window = dom.window;
+  global.document = dom.window.document;
+}
+
 describe('App', () => {
   describe('init()', () => {
     let app;
@@ -150,6 +165,24 @@ describe('Modu', () => {
       // Inspect displays
       assert.equal(displayOne.key, 'main', 'display one should have a key');
       assert.equal(displayTwo.key, '', 'display two should not have a key');
+    });
+  });
+
+  describe('creating multiple modules per element', () => {
+    let app;
+
+    beforeEach(() => {
+      getBodyDom();
+      app = initApp();
+    });
+
+    it('can create multiple components on one element', async () => {
+      await app.modulesReady;
+      const resizer = app.getModulesByName('resizer')[0].module;
+      const scroller = app.getModulesByName('scroller')[0].module;
+
+      assert.typeOf(resizer, 'object');
+      assert.typeOf(scroller, 'object');
     });
   });
 

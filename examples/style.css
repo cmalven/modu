@@ -2,3 +2,7 @@ html {
   background-color: #111;
   color: white;
 }
+
+body {
+  min-height: 3000px;
+}
