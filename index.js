@@ -7,13 +7,13 @@ export const toKebabCase = (name) => {
     .split('')
     .map((letter) => {
       if (/[A-Z]/.test(letter)) {
-        return ` ${letter.toLowerCase()}`
+        return ` ${letter.toLowerCase()}`;
       }
-      return letter
+      return letter;
     })
     .join('')
     .trim()
-    .replace(/[_\s]+/g, '-')
+    .replace(/[_\s]+/g, '-');
 };
 
 /**
@@ -24,9 +24,9 @@ export const toPascalCase = (name) => {
   return toKebabCase(name)
     .split('-')
     .map(word => {
-      return word.slice(0, 1).toUpperCase() + word.slice(1)
+      return word.slice(0, 1).toUpperCase() + word.slice(1);
     })
-    .join('')
+    .join('');
 };
 
 class Modu {
@@ -165,6 +165,7 @@ class App {
     } = options;
 
     this.storage = [];
+    this.mutationObservers = [];
     this.modulesReady = null;
     this.initialModules = initialModules;
     this.prefix = 'data-module-';
@@ -186,6 +187,26 @@ class App {
 
     // Init modules for all elements
     this.initModulesForElements(elements);
+
+    // Listen for any elements to be added to the container
+    const observer = new MutationObserver(this.onMutation.bind(this));
+    const config = { childList: true, subtree: true };
+    observer.observe(containerEl, config);
+    this.mutationObservers.push({ element: containerEl, observer });
+  }
+
+  onMutation(mutationsList) {
+    // Were any nodes added?
+    const areNodesAdded = mutationsList.some(mutation => mutation.addedNodes.length);
+    if (areNodesAdded) this.init();
+
+    // Loop through any removed nodes and remove their corresponding module
+    const destroyedElements = mutationsList
+      .filter(mutation => mutation.removedNodes.length)
+      .map(mutation => mutation.removedNodes[0])
+      .flat()
+      .filter(node => this.getModulesForElement(node).length);
+    this.destroyModulesForElements(destroyedElements);
   }
 
   /**
@@ -204,6 +225,13 @@ class App {
 
     // Init modules for all elements
     this.destroyModulesForElements(elements);
+
+    // Disconnect all mutation observers for element
+    this.mutationObservers.forEach(({ element, observer }) => {
+      if (element === containerEl) {
+        observer.disconnect();
+      }
+    });
   }
 
   getModuleElements(containerEl = document) {
@@ -221,7 +249,7 @@ class App {
   initModulesForElements(elements) {
     const modulePromises = elements.map(el => {
       return this.initModules(el);
-    })
+    });
 
     this.modulesReady = Promise.allSettled(modulePromises);
   }
@@ -235,7 +263,7 @@ class App {
       // Destroy the module
       modules.forEach(module => {
         module.module.cleanup();
-      })
+      });
 
       // Add to the indexes to destroy
       indexesToDestroy.push(idx);
@@ -253,7 +281,7 @@ class App {
 
     // Get all names for the element
     const names = this.getModuleNamesFromElement(element);
-    names.forEach(({ name, key}) => {
+    names.forEach(({ name, key }) => {
       // console.log(name);
       // console.log(key);
       return new Promise((res, rej) => {
