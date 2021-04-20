@@ -127,6 +127,7 @@ class Modu {
   call(module, method, params = null, key = null) {
     // Get all modules that match the name and key
     const modules = this.app.getModulesByName(module, key);
+    let results = [];
 
     // Call the method on each module
     modules.forEach(({ module }) => {
@@ -143,8 +144,10 @@ class Modu {
         params = [params];
       }
 
-      return moduleMethod.apply(module, params);
+      results.push(moduleMethod.apply(module, params));
     });
+
+    return results.length === 1 ? results[0] : results;
   }
 
   /**

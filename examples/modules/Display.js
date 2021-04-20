@@ -14,6 +14,7 @@ class Display extends Modu {
 
   update = newValue => {
     this.countEl.innerHTML = newValue;
+    return true;
   }
 
   cleanup = () => {}

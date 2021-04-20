@@ -282,8 +282,12 @@ describe('Modu', () => {
       const displayTwoMethod = sinon.spy(displayTwo, 'update');
 
       // Counter calls all displays
-      counter.call('Display', 'update', 'all displays');
-      counter.call('Display', 'update', 'main display', 'main');
+      const result1 = counter.call('Display', 'update', 'all displays');
+      const result2 = counter.call('Display', 'update', 'main display', 'main');
+
+      // Returns values
+      assert.deepEqual(result1, [true, true]);
+      assert.deepEqual(result2, true);
 
       expect(displayOneMethod).calledTwice;
       expect(displayTwoMethod).calledOnce;
