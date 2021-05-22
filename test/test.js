@@ -38,7 +38,7 @@ const getCounterDom = () => {
             data-counter-min="-10"
             data-counter-max="10"
           >
-            <button data-counter="less">Less</button>
+            <button data-counter="less" data-counter-child-value="test">Less</button>
             <button data-counter="more">More</button>
           </div>
 
@@ -224,9 +224,13 @@ describe('Modu', () => {
       const counter = app.getModulesByName('counter')[0].module;
       const min = counter.getData('min');
       const max = counter.getData('max');
-
       assert.equal(min, '-10');
       assert.equal(max, '10');
+
+      // Get a value on a child element
+      const lessEl = counter.get('less');
+      const childValue = counter.getData('child-value', lessEl);
+      assert.equal(childValue, 'test');
     });
   });
 
