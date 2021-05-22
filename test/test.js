@@ -264,6 +264,29 @@ describe('Modu', () => {
     });
   });
 
+  describe('on() and emit() on same element', () => {
+    let app;
+
+    beforeEach(() => {
+      getBodyDom();
+      app = initApp();
+    });
+
+    it('different modules on same element can communicate', async () => {
+      await app.modulesReady;
+      const resizer = app.getModulesByName('resizer')[0].module;
+      const scroller = app.getModulesByName('scroller')[0].module;
+
+      const callbackStub = sinon.stub();
+      scroller.on('Resizer', 'update', callbackStub);
+
+      resizer.emit('update', 'hello');
+      resizer.emit('update', 'modu');
+      expect(callbackStub).calledTwice;
+      assert.deepEqual(callbackStub.args, [['hello'], ['modu']]);
+    });
+  });
+
   describe('call()', () => {
     let app;
 

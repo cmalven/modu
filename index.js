@@ -87,7 +87,7 @@ class Modu {
       if (!allListeners.length) return;
 
       // If the module is the same as this one, ignore it
-      if (module.el === this.el) return;
+      if (module.name === this.name && module.el === this.el) return;
 
       // Find all matching listeners and fire callbacks
       allListeners.forEach(listener => {
