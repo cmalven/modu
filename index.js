@@ -257,8 +257,6 @@ class App {
     // Get all names for the element
     const names = this.getModuleNamesFromElement(element);
     names.forEach(({ name, key}) => {
-      // console.log(name);
-      // console.log(key);
       return new Promise((res, rej) => {
         // Look for an existing module already created for this element
         const existingModules = this.getModulesForElement(element, name);
