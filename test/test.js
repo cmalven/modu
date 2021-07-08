@@ -11,11 +11,11 @@ import * as initialModules from '../examples/modules/initial';
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
-const initApp = () => {
+const initApp = (containerEl = document) => {
   const app = new App({
     importMethod: module => import('../examples/modules/' + module + '.js'),
   });
-  app.init();
+  app.init(containerEl);
   return app;
 }
 
@@ -28,29 +28,39 @@ const initAppInitial = () => {
   return app;
 }
 
-const getCounterDom = () => {
+const getCountersMarkup = () => {
+  return `
+      <!-- Counter -->
+    <div class="test-container-1">
+      <div
+        data-module-counter="main"
+        data-counter-min="-10"
+        data-counter-max="10"
+      >
+        <button data-counter="less">Less</button>
+        <button data-counter="more">More</button>
+      </div>
+    </div>
+
+    <div class="test-container-2">
+      <!-- Display (One) -->
+      <div data-module-display="main">
+        <p data-display="count">0</p>
+      </div>
+
+      <!-- Display (Two) -->
+      <div data-module-display>
+        <p data-display="count">0</p>
+      </div>
+    </div>
+  `;
+}
+
+const getCommonDom = () => {
   const dom = new JSDOM(
     `<html>
        <body>
-          <!-- Counter -->
-          <div
-            data-module-counter="main"
-            data-counter-min="-10"
-            data-counter-max="10"
-          >
-            <button data-counter="less">Less</button>
-            <button data-counter="more">More</button>
-          </div>
-
-          <!-- Display (One) -->
-          <div data-module-display="main">
-            <p data-display="count">0</p>
-          </div>
-
-          <!-- Display (Two) -->
-          <div data-module-display>
-            <p data-display="count">0</p>
-          </div>
+         ${getCountersMarkup()}
        </body>
      </html>`,
     {url: 'http://localhost'},
@@ -59,13 +69,14 @@ const getCounterDom = () => {
   global.document = dom.window.document;
 }
 
-const getBodyDom = () => {
+const getBodyDom = (markup = '') => {
   const dom = new JSDOM(
     `<html>
        <body
          data-module-resizer
          data-module-scroller
        >
+       ${markup}
        </body>
      </html>`,
     {url: 'http://localhost'},
@@ -79,7 +90,7 @@ describe('App', () => {
     let app;
 
     beforeEach(() => {
-      getCounterDom();
+      getCommonDom();
       app = initApp();
     });
 
@@ -109,7 +120,7 @@ describe('App', () => {
     let app;
 
     beforeEach(() => {
-      getCounterDom();
+      getCommonDom();
       app = initAppInitial();
     });
 
@@ -127,7 +138,7 @@ describe('App', () => {
     let app;
 
     beforeEach(() => {
-      getCounterDom();
+      getCommonDom();
       app = initApp();
     });
 
@@ -145,7 +156,7 @@ describe('Modu', () => {
     let app;
 
     beforeEach(() => {
-      getCounterDom();
+      getCommonDom();
       app = initApp();
     });
 
@@ -165,6 +176,52 @@ describe('Modu', () => {
       // Inspect displays
       assert.equal(displayOne.key, 'main', 'display one should have a key');
       assert.equal(displayTwo.key, '', 'display two should not have a key');
+    });
+  });
+
+  describe('creation with multiple containers', () => {
+    let app;
+
+    beforeEach(() => {
+      getBodyDom(getCountersMarkup());
+      app = initApp();
+    });
+
+    it('has expected details', async () => {
+      await app.modulesReady;
+      assert.deepEqual(app.storage.map(mod => mod.name), [
+        'resizer',
+        'scroller',
+        'counter',
+        'display',
+        'display',
+      ], '`app` has correct combination of modules')
+
+      // Destroy the first container
+      app.destroyModules(document.querySelector('.test-container-1'));
+      assert.deepEqual(app.storage.map(mod => mod.name), [
+        'resizer',
+        'scroller',
+        'display',
+        'display',
+      ], '`app` has correct combination of modules after destroying first container')
+
+      // Destroy the second container
+      app.destroyModules(document.querySelector('.test-container-2'));
+      assert.deepEqual(app.storage.map(mod => mod.name), [
+        'resizer',
+        'scroller',
+      ], '`app` has correct combination of modules after destroying second container')
+
+      // Re-Add the second container
+      app.init(document.querySelector('.test-container-2'));
+      await app.modulesReady;
+      assert.deepEqual(app.storage.map(mod => mod.name), [
+        'resizer',
+        'scroller',
+        'display',
+        'display',
+      ], '`app` has correct combination of modules after re-initializing second container')
     });
   });
 
@@ -190,7 +247,7 @@ describe('Modu', () => {
     let app;
 
     beforeEach(() => {
-      getCounterDom();
+      getCommonDom();
       app = initApp();
     });
 
@@ -215,7 +272,7 @@ describe('Modu', () => {
     let app;
 
     beforeEach(() => {
-      getCounterDom();
+      getCommonDom();
       app = initApp();
     });
 
@@ -234,7 +291,7 @@ describe('Modu', () => {
     let app;
 
     beforeEach(() => {
-      getCounterDom();
+      getCommonDom();
       app = initApp();
     });
 
@@ -268,7 +325,7 @@ describe('Modu', () => {
     let app;
 
     beforeEach(() => {
-      getCounterDom();
+      getCommonDom();
       app = initApp();
     });
 
@@ -312,7 +369,7 @@ describe('Modu', () => {
     let app;
 
     beforeEach(() => {
-      getCounterDom();
+      getCommonDom();
       app = initApp();
     });
 

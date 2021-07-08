@@ -230,24 +230,25 @@ class App {
   }
 
   destroyModulesForElements(elements) {
-    let indexesToDestroy = [];
+    let modulesToDestroy = [];
 
-    elements.forEach((el, idx) => {
+    // Find matching modules for elements
+    elements.forEach(el => {
       const modules = this.getModulesForElement(el);
-
-      // Destroy the module
-      modules.forEach(module => {
-        module.module.cleanup();
-      })
-
-      // Add to the indexes to destroy
-      indexesToDestroy.push(idx);
+      modulesToDestroy = modulesToDestroy.concat(modules);
     });
 
-    // Remove from list of app modules
-    let idx = indexesToDestroy.length;
+    // Cleanup modules and remove from app storage
+    let idx = this.storage.length;
     while (idx--) {
-      this.storage.splice(idx, 1);
+      const currentModule = this.storage[idx];
+      const matchingModuleToDestroy = modulesToDestroy.find(mod => {
+        return mod.name === currentModule.name && mod.el === currentModule.el;
+      });
+      if (matchingModuleToDestroy) {
+        matchingModuleToDestroy.module.cleanup();
+        this.storage.splice(idx, 1);
+      }
     }
   }
 
