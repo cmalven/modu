@@ -59,11 +59,13 @@ class Modu {
 
   /**
    * Retrieve the value of a data attribute stored on the modules element
-   * @param {string} name
+   * @param {string} name      The name identifier for the value to get
+   * @param {HTMLElement} el   An optional child element to get the value on
    * @returns {string}
    */
-  getData(name) {
-    return this.el.getAttribute(this.dataPrefix + name);
+  getData(name, el = null) {
+    const searchElement = el ? el : this.el;
+    return searchElement.getAttribute(this.dataPrefix + name);
   }
 
   init() {}
@@ -87,7 +89,7 @@ class Modu {
       if (!allListeners.length) return;
 
       // If the module is the same as this one, ignore it
-      if (module.el === this.el) return;
+      if (module.name === this.name && module.el === this.el) return;
 
       // Find all matching listeners and fire callbacks
       allListeners.forEach(listener => {

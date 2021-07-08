@@ -212,7 +212,7 @@ An individual module should extend `Modu` and inherits all of its common behavio
 | `get(name)` | Returns the first child element of the module that matches the passed name | `this.get('button')` |
 | `getAll(name)` | Returns all child elements of the module that match the passed name | `this.getAll('button')` |
 | `getSelector(name)` | Returns a DOM selector for a given element name contained within the module | `this.getSelector('button')` returns `[data-my-module='button']` |
-| `getData(name)` | Retrieve the value of a data attribute stored on the modules element | `this.getData('max')` |
+| `getData(name, el = null)` | Retrieve the value of a data attribute stored on the modules element (or on a child element using the `el` parameter) | `this.getData('max')` or `this.getData('max', this.get('some-child'))` |
 | `on(module, event, callback, key = null)` | Add a listener for events fired in another module using `.emit()` | `this.on('Counter', 'change', (newValue) => {…})` or `this.on('Counter', 'change', (newValue) => {…}, 'one')` |
 | `emit(event, data = null)` | Broadcast an event that can be listened for by other modules using `.on()` | `this.emit('change')` or `this.emit('change', { newValue: 10 })` |
 | `call(module, method, params = null, key = null)` | Calls a method on another module | `this.call('Counter', 'change', 1, 'one')` or `this.call('Counter', 'change')` |

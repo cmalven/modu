@@ -37,7 +37,7 @@ const getCountersMarkup = () => {
         data-counter-min="-10"
         data-counter-max="10"
       >
-        <button data-counter="less">Less</button>
+        <button data-counter="less" data-counter-child-value="test">Less</button>
         <button data-counter="more">More</button>
       </div>
     </div>
@@ -281,9 +281,13 @@ describe('Modu', () => {
       const counter = app.getModulesByName('counter')[0].module;
       const min = counter.getData('min');
       const max = counter.getData('max');
-
       assert.equal(min, '-10');
       assert.equal(max, '10');
+
+      // Get a value on a child element
+      const lessEl = counter.get('less');
+      const childValue = counter.getData('child-value', lessEl);
+      assert.equal(childValue, 'test');
     });
   });
 
@@ -318,6 +322,29 @@ describe('Modu', () => {
 
       counter.emit('change', 'hello');
       expect(callbackStub).not.called;
+    });
+  });
+
+  describe('on() and emit() on same element', () => {
+    let app;
+
+    beforeEach(() => {
+      getBodyDom();
+      app = initApp();
+    });
+
+    it('different modules on same element can communicate', async () => {
+      await app.modulesReady;
+      const resizer = app.getModulesByName('resizer')[0].module;
+      const scroller = app.getModulesByName('scroller')[0].module;
+
+      const callbackStub = sinon.stub();
+      scroller.on('Resizer', 'update', callbackStub);
+
+      resizer.emit('update', 'hello');
+      resizer.emit('update', 'modu');
+      expect(callbackStub).calledTwice;
+      assert.deepEqual(callbackStub.args, [['hello'], ['modu']]);
     });
   });
 
