@@ -260,11 +260,11 @@ class App {
     // Get all names for the element
     const names = this.getModuleNamesFromElement(element);
     names.forEach(({ name, key }) => {
-      return new Promise((res, rej) => {
-        // Look for an existing module already created for this element
-        const existingModules = this.getModulesForElement(element, name);
-        if (existingModules.length) return readyPromises.push(res());
+      // Look for an existing module already created for this element
+      const existingModules = this.getModulesForElement(element, name);
+      if (existingModules.length) return readyPromises.push(new Promise(res => res()));
 
+      const promise = new Promise((res, rej) => {
         // Get the name of the module
         const pascalName = toPascalCase(name);
 
@@ -285,6 +285,7 @@ class App {
           rej();
         });
       });
+      readyPromises.push(promise);
     });
 
     return Promise.all(readyPromises);
