@@ -126,7 +126,7 @@ describe('App', () => {
       console.log(result);
       assert.lengthOf(app.storage, 3);
       assert.lengthOf(result, 3);
-    });
+    }, 1000);
 
     test('does not duplicate existing modules if called twice', async () => {
       // await app.modulesReady;
@@ -137,6 +137,6 @@ describe('App', () => {
 
       // await app.modulesReady;
       // assert.lengthOf(app.storage, 3);
-    });
+    }, 1000);
   });
 });
