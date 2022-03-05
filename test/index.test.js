@@ -1,4 +1,4 @@
-import { describe, assert, it, expect, vi, test, beforeEach } from 'vitest';
+import { describe, assert, it, expect, vi, beforeEach } from 'vitest';
 import { App, toKebabCase, toPascalCase } from '../index';
 import { JSDOM } from 'jsdom';
 import * as initialModules from '../examples/modules/initial';
@@ -213,21 +213,21 @@ describe('Modu', () => {
       await app.modulesReady;
       // eslint-disable-next-line max-nested-callbacks
       assert.deepEqual(app.storage.map(mod => mod.name), [
-        'resizer',
-        'scroller',
         'counter',
         'display',
         'display',
+        'resizer',
+        'scroller',
       ], '`app` has correct combination of modules');
 
       // Destroy the first container
       app.destroyModules(document.querySelector('.test-container-1'));
       // eslint-disable-next-line max-nested-callbacks
       assert.deepEqual(app.storage.map(mod => mod.name), [
+        'display',
+        'display',
         'resizer',
         'scroller',
-        'display',
-        'display',
       ], '`app` has correct combination of modules after destroying first container');
 
       // Destroy the second container
@@ -382,14 +382,14 @@ describe('Modu', () => {
       app = initApp();
     });
 
-    it.only('calling methods', async () => {
+    it('calling methods', async () => {
       await app.modulesReady;
       const counter = app.getModulesByName('counter')[0].module;
       const displayOne = app.getModulesByName('display')[0].module;
       const displayTwo = app.getModulesByName('display')[1].module;
 
-      const displayOneMethod = sinon.spy(displayOne, 'update');
-      const displayTwoMethod = sinon.spy(displayTwo, 'update');
+      const displayOneMethod = vi.spyOn(displayOne, 'update');
+      const displayTwoMethod = vi.spyOn(displayTwo, 'update');
 
       // Counter calls all displays
       const result1 = counter.call('Display', 'update', 'all displays');
@@ -399,22 +399,22 @@ describe('Modu', () => {
       assert.deepEqual(result1, [true, true]);
       assert.deepEqual(result2, true);
 
-      expect(displayOneMethod).calledTwice;
-      expect(displayTwoMethod).calledOnce;
-      assert.deepEqual(displayOneMethod.args, [['all displays'], ['main display']]);
-      assert.deepEqual(displayTwoMethod.args, [['all displays']]);
+      expect(displayOneMethod).toHaveBeenCalledTimes(2);
+      expect(displayTwoMethod).toHaveBeenCalledTimes(1);
+      assert.deepEqual(displayOneMethod.calls, [['all displays'], ['main display']]);
+      assert.deepEqual(displayTwoMethod.calls, [['all displays']]);
     });
 
     it('does not call methods on itself', async () => {
       await app.modulesReady;
       const counter = app.getModulesByName('counter')[0].module;
 
-      const counterMethod = sinon.spy(counter, 'change');
+      const counterMethod = vi.spyOn(counter, 'change');
 
       // Counter calls all displays
       counter.call('Counter', 'change', 'counter was updated');
 
-      expect(counterMethod).not.called;
+      expect(counterMethod).not.toHaveBeenCalled();
     });
   });
 
@@ -484,3 +484,4 @@ describe('Utils', () => {
     });
   });
 });
+
