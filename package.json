@@ -16,12 +16,11 @@
   "author": "Chris Malven",
   "license": "ISC",
   "devDependencies": {
-    "@malven/eslint-config": "^1.0.3",
-    "eslint": "^7.23.0",
-    "eslint-plugin-react": "^7.23.1",
+    "@malven/eslint-config": "^2.0.0",
+    "eslint": "^8.10.0",
     "jsdom": "^16.6.0",
     "vite": "^2.4.1",
-    "vitepress": "^0.15.6",
+    "vitepress": "^0.22.3",
     "vitest": "^0.5.9"
   }
 }
