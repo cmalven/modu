@@ -1,7 +1,7 @@
 import { Modu } from '../../index';
 
 class Counter extends Modu {
-  constructor(m) {
+  constructor(m: Modu) {
     super(m);
 
     this.count = 0;
@@ -17,12 +17,12 @@ class Counter extends Modu {
   /**
    * Will automatically be called when the module is loaded
    */
-  init = () => {
+  override init = () => {
     this.lessEl.addEventListener('click', this.handleLess);
     this.moreEl.addEventListener('click', this.handleMore);
   }
 
-  change = (change) => {
+  change = (change: number) => {
     this.count += change;
     if (this.count < this.min) this.count = this.min;
     if (this.count > this.max) this.count = this.max;
@@ -34,7 +34,7 @@ class Counter extends Modu {
   /**
    * Will automatically be called when the module (or entire app) is destroyed.
    */
-  cleanup = () => {
+  override cleanup = () => {
     this.lessEl.removeEventListener('click', this.handleLess);
     this.moreEl.removeEventListener('click', this.handleMore);
   }

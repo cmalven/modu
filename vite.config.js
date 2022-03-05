@@ -3,7 +3,8 @@ export default {
     target: 'es2015',
     minify: false,
     lib: {
-      entry: 'index.js',
+      entry: 'index.ts',
+      name: 'Modu',
       formats: ['es'],
     }
   }

@@ -1,11 +1,11 @@
 import { Modu } from '../../index';
 
 class Resizer extends Modu {
-  constructor(m) {
+  constructor(m: Modu) {
     super(m);
   }
 
-  init = () => {
+  override init = () => {
     window.addEventListener('resize', this.update);
   }
 
@@ -13,7 +13,7 @@ class Resizer extends Modu {
     console.log('Window width', window.innerWidth);
   }
 
-  cleanup = () => {}
+  override cleanup = () => {}
 }
 
 export default Resizer;

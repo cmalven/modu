@@ -1,6 +1,6 @@
 *
 !dist
-!index.js
+!index.ts
 !package.json
 !package-lock.json
 !README.md

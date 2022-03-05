@@ -1,11 +1,11 @@
 import { Modu } from '../../index';
 
 class Scroller extends Modu {
-  constructor(m) {
+  constructor(m: Modu) {
     super(m);
   }
 
-  init = () => {
+  override init = () => {
     window.addEventListener('scroll', this.update);
   }
 
@@ -13,7 +13,7 @@ class Scroller extends Modu {
     console.log('Window scroll', window.scrollY);
   }
 
-  cleanup = () => {}
+  override cleanup = () => {}
 }
 
 export default Scroller;

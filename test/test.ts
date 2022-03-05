@@ -1,15 +1,26 @@
-import {App} from '../dist/modu.es.js';
+import { App, toKebabCase, toPascalCase } from '../index';
 import {JSDOM} from 'jsdom';
-import sinon from 'sinon';
+import * as sinon from 'sinon';
 import {assert, expect} from 'chai';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import sinonChai from 'sinon-chai';
-import {toKebabCase, toPascalCase} from '../dist/modu.es.js';
+import * as chai from 'chai';
+import * as chaiAsPromised from 'chai-as-promised';
+import * as sinonChai from 'sinon-chai';
 import * as initialModules from '../examples/modules/initial';
 
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
+
+declare global {
+  namespace NodeJS {
+    interface Global {
+      document: Document;
+      window: Window;
+      navigator: Navigator;
+    }
+  }
+}
+
+const globalAny:any = global;
 
 const initApp = (containerEl = document) => {
   const app = new App({
@@ -65,8 +76,8 @@ const getCommonDom = () => {
      </html>`,
     {url: 'http://localhost'},
   );
-  global.window = dom.window;
-  global.document = dom.window.document;
+  globalAny.document = dom.window.document;
+  globalAny.window = global.document.defaultView;
 }
 
 const getBodyDom = (markup = '') => {
@@ -81,13 +92,13 @@ const getBodyDom = (markup = '') => {
      </html>`,
     {url: 'http://localhost'},
   );
-  global.window = dom.window;
-  global.document = dom.window.document;
+  globalAny.document = dom.window.document;
+  globalAny.window = global.document.defaultView;
 }
 
-describe('App', () => {
+describe.only('App', () => {
   describe('init()', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -117,7 +128,7 @@ describe('App', () => {
   });
 
   describe('init() with initial modules', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -135,7 +146,7 @@ describe('App', () => {
   });
 
   describe('destroy()', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -153,7 +164,7 @@ describe('App', () => {
 
 describe('Modu', () => {
   describe('creation', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -180,7 +191,7 @@ describe('Modu', () => {
   });
 
   describe('creation with multiple containers', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getBodyDom(getCountersMarkup());
@@ -226,7 +237,7 @@ describe('Modu', () => {
   });
 
   describe('creating multiple modules per element', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getBodyDom();
@@ -244,7 +255,7 @@ describe('Modu', () => {
   });
 
   describe('get() and getAll()', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -263,13 +274,14 @@ describe('Modu', () => {
 
       // Retrieve all elements
       const lessEls = counter.getAll('less');
+      const firstLessEl = <Element>lessEls[0];
       assert.lengthOf(lessEls, 1, 'should be only one less el');
-      assert.equal(lessEls[0].tagName, 'BUTTON', 'less is an button element');
+      assert.equal(firstLessEl.tagName, 'BUTTON', 'less is an button element');
     });
   });
 
   describe('getData();', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -292,7 +304,7 @@ describe('Modu', () => {
   });
 
   describe('on() and emit()', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -326,7 +338,7 @@ describe('Modu', () => {
   });
 
   describe('on() and emit() on same element', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getBodyDom();
@@ -349,7 +361,7 @@ describe('Modu', () => {
   });
 
   describe('call()', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -393,7 +405,7 @@ describe('Modu', () => {
   });
 
   describe('getSelector()', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
