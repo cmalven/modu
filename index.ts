@@ -7,13 +7,13 @@ export const toKebabCase = (name: string): string => {
     .split('')
     .map((letter) => {
       if (/[A-Z]/.test(letter)) {
-        return ` ${letter.toLowerCase()}`
+        return ` ${letter.toLowerCase()}`;
       }
-      return letter
+      return letter;
     })
     .join('')
     .trim()
-    .replace(/[_\s]+/g, '-')
+    .replace(/[_\s]+/g, '-');
 };
 
 /**
@@ -24,9 +24,9 @@ export const toPascalCase = (name: string): string => {
   return toKebabCase(name)
     .split('-')
     .map(word => {
-      return word.slice(0, 1).toUpperCase() + word.slice(1)
+      return word.slice(0, 1).toUpperCase() + word.slice(1);
     })
-    .join('')
+    .join('');
 };
 
 type ModuOptions = {
@@ -168,7 +168,7 @@ class Modu {
   call(moduleName: string, method: string, params: object | [] | string | number = null, key: string | null = null) {
     // Get all modules that match the name and key
     const modules = this.app.getModulesByName(moduleName, key);
-    let results: any[] = [];
+    const results: any[] = [];
 
     // Call the method on each module
     modules.forEach(({ module }) => {
@@ -203,7 +203,7 @@ class Modu {
 
 class App {
   storage: StoredModu[] = [];
-  prefix: string = 'data-module-';
+  prefix = 'data-module-';
   modulesReady: Promise<any[]> = null;
   initialModules: {[key: string]: ModuConstructable} = {};
   importMethod: (name: string) => Promise<any>;
@@ -211,7 +211,7 @@ class App {
   constructor(options: AppOptions) {
     const defaultOptions = {
       initialModules: {},
-    }
+    };
     Object.assign(this, defaultOptions, options);
 
     // Error if no import method is set
@@ -264,7 +264,7 @@ class App {
   initModulesForElements(elements: Element[]) {
     const modulePromises = elements.map(el => {
       return this.initModules(el);
-    })
+    });
 
     this.modulesReady = Promise.allSettled(modulePromises);
   }
@@ -293,11 +293,11 @@ class App {
   }
 
   initModules(element: Element) {
-    let readyPromises: void[] = [];
+    const readyPromises: void[] = [];
 
     // Get all names for the element
     const names = this.getModuleNamesFromElement(element);
-    names.forEach(({ name, key}) => {
+    names.forEach(({ name, key }) => {
       return new Promise<void | Modu>((res, rej) => {
         // Look for an existing module already created for this element
         const existingModules = this.getModulesForElement(element, name);
@@ -357,7 +357,7 @@ class App {
   }
 
   getModuleNamesFromElement(element: Element) {
-    let results: { name: string, key?: string }[] = [];
+    const results: { name: string, key?: string }[] = [];
 
     Array.from(element.attributes).forEach(attr => {
       if (attr.name.startsWith(this.prefix)) {

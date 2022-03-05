@@ -10,8 +10,8 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs",
-    "test": "mocha-vite-puppeteer",
-    "test:dev": "npm run test && chokidar 'index.ts' 'test-old/**/*.js' '**/*.html' -c 'clear && npm run test'"
+    "test": "vitest",
+    "test:dev": "vitest watch"
   },
   "author": "Chris Malven",
   "license": "ISC",
@@ -32,9 +32,7 @@
     "jsdom": "^16.6.0",
     "typescript": "^4.5.2",
     "vite": "^2.4.1",
-    "vitepress": "^0.15.6"
-  },
-  "dependencies": {
-
+    "vitepress": "^0.15.6",
+    "vitest": "^0.5.9"
   }
 }
