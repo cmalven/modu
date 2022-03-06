@@ -385,6 +385,14 @@ describe('Modu', () => {
       assert.deepEqual(displayTwoMethod.calls, [['all displays']]);
     });
 
+    it('calling invalid methods', async () => {
+      await app.modulesReady;
+      const counter = app.getModulesByName('counter')[0].module;
+      console.error = vi.fn();
+      counter.call('Display', 'foo');
+      expect(console.error.mock.calls[0][0]).toBe('Failed to call non-existant method "foo" on module "display"');
+    });
+
     it('does not call methods on itself', async () => {
       await app.modulesReady;
       const counter = app.getModulesByName('counter')[0].module;
