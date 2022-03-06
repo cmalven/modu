@@ -138,7 +138,7 @@ class Modu {
 
       const moduleMethod = module[method];
       if (typeof moduleMethod !== 'function') {
-        return console.error(`Failed to call non-existant method "${method}" on module "${module.name}"`);
+        return console.error(`Failed to call non-existent method "${method}" on module "${module.name}"`);
       }
 
       // Always pass params as an array
