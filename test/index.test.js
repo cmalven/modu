@@ -1,15 +1,7 @@
-import {App} from '../dist/modu.es.js';
-import {JSDOM} from 'jsdom';
-import sinon from 'sinon';
-import {assert, expect} from 'chai';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-import sinonChai from 'sinon-chai';
-import {toKebabCase, toPascalCase} from '../dist/modu.es.js';
+import { describe, assert, it, expect, vi, beforeEach } from 'vitest';
+import { App, toKebabCase, toPascalCase } from '../index';
+import { JSDOM } from 'jsdom';
 import * as initialModules from '../examples/modules/initial';
-
-chai.use(chaiAsPromised);
-chai.use(sinonChai);
 
 const initApp = (containerEl = document) => {
   const app = new App({
@@ -17,7 +9,7 @@ const initApp = (containerEl = document) => {
   });
   app.init(containerEl);
   return app;
-}
+};
 
 const initAppInitial = () => {
   const app = new App({
@@ -26,7 +18,12 @@ const initAppInitial = () => {
   });
   app.init();
   return app;
-}
+};
+
+//
+//   Generate Markup
+//
+//////////////////////////////////////////////////////////////////////
 
 const getCountersMarkup = () => {
   return `
@@ -54,7 +51,7 @@ const getCountersMarkup = () => {
       </div>
     </div>
   `;
-}
+};
 
 const getCommonDom = () => {
   const dom = new JSDOM(
@@ -63,11 +60,11 @@ const getCommonDom = () => {
          ${getCountersMarkup()}
        </body>
      </html>`,
-    {url: 'http://localhost'},
+    { url: 'http://localhost' },
   );
-  global.window = dom.window;
   global.document = dom.window.document;
-}
+  global.window = global.document.defaultView;
+};
 
 const getBodyDom = (markup = '') => {
   const dom = new JSDOM(
@@ -79,11 +76,16 @@ const getBodyDom = (markup = '') => {
        ${markup}
        </body>
      </html>`,
-    {url: 'http://localhost'},
+    { url: 'http://localhost' },
   );
-  global.window = dom.window;
   global.document = dom.window.document;
-}
+  global.window = global.document.defaultView;
+};
+
+//
+//   Tests
+//
+//////////////////////////////////////////////////////////////////////
 
 describe('App', () => {
   describe('init()', () => {
@@ -189,39 +191,43 @@ describe('Modu', () => {
 
     it('has expected details', async () => {
       await app.modulesReady;
-      assert.deepEqual(app.storage.map(mod => mod.name), [
-        'resizer',
-        'scroller',
+      // eslint-disable-next-line max-nested-callbacks
+      expect(app.storage.map(mod => mod.name)).to.include.members([
         'counter',
         'display',
         'display',
-      ], '`app` has correct combination of modules')
+        'resizer',
+        'scroller',
+      ], '`app` has correct combination of modules');
 
       // Destroy the first container
       app.destroyModules(document.querySelector('.test-container-1'));
-      assert.deepEqual(app.storage.map(mod => mod.name), [
+      // eslint-disable-next-line max-nested-callbacks
+      expect(app.storage.map(mod => mod.name)).to.include.members([
+        'display',
+        'display',
         'resizer',
         'scroller',
-        'display',
-        'display',
-      ], '`app` has correct combination of modules after destroying first container')
+      ], '`app` has correct combination of modules after destroying first container');
 
       // Destroy the second container
       app.destroyModules(document.querySelector('.test-container-2'));
-      assert.deepEqual(app.storage.map(mod => mod.name), [
+      // eslint-disable-next-line max-nested-callbacks
+      expect(app.storage.map(mod => mod.name)).to.include.members([
         'resizer',
         'scroller',
-      ], '`app` has correct combination of modules after destroying second container')
+      ], '`app` has correct combination of modules after destroying second container');
 
       // Re-Add the second container
       app.init(document.querySelector('.test-container-2'));
       await app.modulesReady;
-      assert.deepEqual(app.storage.map(mod => mod.name), [
+      // eslint-disable-next-line max-nested-callbacks
+      expect(app.storage.map(mod => mod.name)).to.include.members([
         'resizer',
         'scroller',
         'display',
         'display',
-      ], '`app` has correct combination of modules after re-initializing second container')
+      ], '`app` has correct combination of modules after re-initializing second container');
     });
   });
 
@@ -304,24 +310,24 @@ describe('Modu', () => {
       const counter = app.getModulesByName('counter')[0].module;
       const display = app.getModulesByName('display')[0].module;
 
-      const callbackStub = sinon.stub();
+      const callbackStub = vi.fn();
       display.on('Counter', 'change', callbackStub);
 
       counter.emit('change', 'hello');
       counter.emit('change', 'modu');
-      expect(callbackStub).calledTwice;
-      assert.deepEqual(callbackStub.args, [['hello'], ['modu']]);
+      expect(callbackStub).toHaveBeenCalledTimes(2);
+      assert.deepEqual(callbackStub.calls, [['hello'], ['modu']]);
     });
 
     it('does not repond to events emitted by itself', async () => {
       await app.modulesReady;
       const counter = app.getModulesByName('counter')[0].module;
 
-      const callbackStub = sinon.stub();
+      const callbackStub = vi.fn();
       counter.on('Counter', 'change', callbackStub);
 
       counter.emit('change', 'hello');
-      expect(callbackStub).not.called;
+      expect(callbackStub).not.toHaveBeenCalled();
     });
   });
 
@@ -338,13 +344,13 @@ describe('Modu', () => {
       const resizer = app.getModulesByName('resizer')[0].module;
       const scroller = app.getModulesByName('scroller')[0].module;
 
-      const callbackStub = sinon.stub();
+      const callbackStub = vi.fn();
       scroller.on('Resizer', 'update', callbackStub);
 
       resizer.emit('update', 'hello');
       resizer.emit('update', 'modu');
-      expect(callbackStub).calledTwice;
-      assert.deepEqual(callbackStub.args, [['hello'], ['modu']]);
+      expect(callbackStub).toHaveBeenCalledTimes(2);
+      assert.deepEqual(callbackStub.calls, [['hello'], ['modu']]);
     });
   });
 
@@ -362,8 +368,8 @@ describe('Modu', () => {
       const displayOne = app.getModulesByName('display')[0].module;
       const displayTwo = app.getModulesByName('display')[1].module;
 
-      const displayOneMethod = sinon.spy(displayOne, 'update');
-      const displayTwoMethod = sinon.spy(displayTwo, 'update');
+      const displayOneMethod = vi.spyOn(displayOne, 'update');
+      const displayTwoMethod = vi.spyOn(displayTwo, 'update');
 
       // Counter calls all displays
       const result1 = counter.call('Display', 'update', 'all displays');
@@ -373,22 +379,30 @@ describe('Modu', () => {
       assert.deepEqual(result1, [true, true]);
       assert.deepEqual(result2, true);
 
-      expect(displayOneMethod).calledTwice;
-      expect(displayTwoMethod).calledOnce;
-      assert.deepEqual(displayOneMethod.args, [['all displays'], ['main display']]);
-      assert.deepEqual(displayTwoMethod.args, [['all displays']]);
+      expect(displayOneMethod).toHaveBeenCalledTimes(2);
+      expect(displayTwoMethod).toHaveBeenCalledTimes(1);
+      assert.deepEqual(displayOneMethod.calls, [['all displays'], ['main display']]);
+      assert.deepEqual(displayTwoMethod.calls, [['all displays']]);
+    });
+
+    it('calling invalid methods', async () => {
+      await app.modulesReady;
+      const counter = app.getModulesByName('counter')[0].module;
+      console.error = vi.fn();
+      counter.call('Display', 'foo');
+      expect(console.error.mock.calls[0][0]).toBe('Failed to call non-existent method "foo" on module "display"');
     });
 
     it('does not call methods on itself', async () => {
       await app.modulesReady;
       const counter = app.getModulesByName('counter')[0].module;
 
-      const counterMethod = sinon.spy(counter, 'change');
+      const counterMethod = vi.spyOn(counter, 'change');
 
       // Counter calls all displays
       counter.call('Counter', 'change', 'counter was updated');
 
-      expect(counterMethod).not.called;
+      expect(counterMethod).not.toHaveBeenCalled();
     });
   });
 
@@ -458,3 +472,4 @@ describe('Utils', () => {
     });
   });
 });
+
