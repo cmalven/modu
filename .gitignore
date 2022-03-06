@@ -6,6 +6,5 @@ coverage
 docs/.vitepress/dist
 
 # Examples
-dist
 dist-ssr
 *.local
