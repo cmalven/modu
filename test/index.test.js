@@ -212,7 +212,7 @@ describe('Modu', () => {
     it('has expected details', async () => {
       await app.modulesReady;
       // eslint-disable-next-line max-nested-callbacks
-      assert.deepEqual(app.storage.map(mod => mod.name), [
+      expect(app.storage.map(mod => mod.name)).to.include.members([
         'counter',
         'display',
         'display',
@@ -223,7 +223,7 @@ describe('Modu', () => {
       // Destroy the first container
       app.destroyModules(document.querySelector('.test-container-1'));
       // eslint-disable-next-line max-nested-callbacks
-      assert.deepEqual(app.storage.map(mod => mod.name), [
+      expect(app.storage.map(mod => mod.name)).to.include.members([
         'display',
         'display',
         'resizer',
@@ -233,7 +233,7 @@ describe('Modu', () => {
       // Destroy the second container
       app.destroyModules(document.querySelector('.test-container-2'));
       // eslint-disable-next-line max-nested-callbacks
-      assert.deepEqual(app.storage.map(mod => mod.name), [
+      expect(app.storage.map(mod => mod.name)).to.include.members([
         'resizer',
         'scroller',
       ], '`app` has correct combination of modules after destroying second container');
@@ -242,7 +242,7 @@ describe('Modu', () => {
       app.init(document.querySelector('.test-container-2'));
       await app.modulesReady;
       // eslint-disable-next-line max-nested-callbacks
-      assert.deepEqual(app.storage.map(mod => mod.name), [
+      expect(app.storage.map(mod => mod.name)).to.include.members([
         'resizer',
         'scroller',
         'display',
