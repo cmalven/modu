@@ -3,26 +3,6 @@ import { App, toKebabCase, toPascalCase } from '../index';
 import { JSDOM } from 'jsdom';
 import * as initialModules from '../examples/modules/initial';
 
-/*
-test('Math.sqrt()', () => {
-  expect(Math.sqrt(4)).toBe(2);
-  expect(Math.sqrt(144)).toBe(12);
-  expect(Math.sqrt(2)).toBe(Math.SQRT2);
-});
-
-test('JSON', () => {
-  const input = {
-    foo: 'hello',
-    bar: 'world',
-  };
-
-  const output = JSON.stringify(input);
-
-  expect(output).eq('{"foo":"hello","bar":"world"}');
-  assert.deepEqual(JSON.parse(output), input, 'matches original');
-});
- */
-
 const initApp = (containerEl = document) => {
   const app = new App({
     importMethod: module => import('../examples/modules/' + module + '.js'),
