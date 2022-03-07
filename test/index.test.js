@@ -319,7 +319,7 @@ describe('Modu', () => {
       assert.deepEqual(callbackStub.calls, [['hello'], ['modu']]);
     });
 
-    it('does not repond to events emitted by itself', async () => {
+    it('does not respond to events emitted by itself', async () => {
       await app.modulesReady;
       const counter = app.getModulesByName('counter')[0].module;
 
