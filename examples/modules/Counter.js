@@ -20,7 +20,7 @@ class Counter extends Modu {
   init = () => {
     this.lessEl.addEventListener('click', this.handleLess);
     this.moreEl.addEventListener('click', this.handleMore);
-  }
+  };
 
   change = (change) => {
     this.count += change;
@@ -29,7 +29,7 @@ class Counter extends Modu {
 
     // Broadcast the change in case any other modules are interested
     this.emit('change', this.count);
-  }
+  };
 
   /**
    * Will automatically be called when the module (or entire app) is destroyed.
@@ -37,7 +37,7 @@ class Counter extends Modu {
   cleanup = () => {
     this.lessEl.removeEventListener('click', this.handleLess);
     this.moreEl.removeEventListener('click', this.handleMore);
-  }
+  };
 }
 
 export default Counter;

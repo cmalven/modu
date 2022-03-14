@@ -1,3 +1,7 @@
 {
-  "extends": "@malven"
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "@malven"
+  ],
+  "parser": "@typescript-eslint/parser"
 }

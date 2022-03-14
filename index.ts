@@ -2,7 +2,7 @@
  * Converts name of a module to kebab case
  * @param {string} name
  */
-export const toKebabCase = (name) => {
+export const toKebabCase = (name: string): string => {
   return name
     .split('')
     .map((letter) => {
@@ -20,7 +20,7 @@ export const toKebabCase = (name) => {
  * Converts all all casings of a module name to be consistent
  * @param {string} name
  */
-export const toPascalCase = (name) => {
+export const toPascalCase = (name: string): string => {
   return toKebabCase(name)
     .split('-')
     .map(word => {
@@ -29,8 +29,47 @@ export const toPascalCase = (name) => {
     .join('');
 };
 
+type ModuOptions = {
+  name: string,
+  key?: string,
+  el: Element,
+  app: App,
+}
+
+type ModuEventListener = {
+  module: string,
+  event: string,
+  callback?: (data?: any) => void,
+  key?: string,
+}
+
+interface ModuConstructable {
+  new (options: ModuOptions): Modu;
+}
+
+type AppOptions = {
+  importMethod: (module: {}) => {};
+  initialModules?: {};
+}
+
+type StoredModu = {
+  name: string;
+  key?: string;
+  el: Element;
+  module: Modu
+}
+
 class Modu {
-  constructor(options) {
+  name: string;
+  key?: string;
+  el: Element;
+  elementPrefix: string;
+  dataPrefix: string;
+  app: App;
+  eventListeners: ModuEventListener[];
+  [methodKey: string]: any; // Necessary  to access arbitrary methods in `.call()`
+
+  constructor(options: ModuOptions) {
     Object.assign(this, {
       ...options,
       eventListeners: [],
@@ -44,26 +83,26 @@ class Modu {
    * @param {string} name
    * @returns {HTMLElement | null}
    */
-  get(name) {
+  get(name: string): Element | null {
     return this.el.querySelector(`[${this.elementPrefix}="${name}"]`);
   }
 
   /**
    * Returns all child elements of the module that match the passed name
    * @param {string} name
-   * @returns {NodeListOf<HTMLElementTagNameMap[string]> | NodeListOf<Element> | NodeListOf<SVGElementTagNameMap[string]>}
+   * @returns {NodeListOf<ElementTagNameMap[string]> | NodeListOf<Element> | NodeListOf<SVGElementTagNameMap[string]>}
    */
-  getAll(name) {
+  getAll(name: string): NodeList {
     return this.el.querySelectorAll(`[${this.elementPrefix}="${name}"]`);
   }
 
   /**
    * Retrieve the value of a data attribute stored on the modules element
    * @param {string} name      The name identifier for the value to get
-   * @param {HTMLElement} el   An optional child element to get the value on
+   * @param {Element} el   An optional child element to get the value on
    * @returns {string}
    */
-  getData(name, el = null) {
+  getData(name: string, el: Element = null) {
     const searchElement = el ? el : this.el;
     return searchElement.getAttribute(this.dataPrefix + name);
   }
@@ -81,7 +120,7 @@ class Modu {
    * @param {string} event         The name of the event
    * @param {any} data             Any data to associate, will be passed to the callback of `.on()`
    */
-  emit(event, data) {
+  emit(event: string, data: any) {
     this.app.storage.forEach(({ module }) => {
       const allListeners = module.eventListeners;
 
@@ -110,7 +149,7 @@ class Modu {
    * @param {function} callback    The callback function to fire when the even is heard. Will receive any event data as the first and only parameter.
    * @param {string} key         An optional key to scope events to
    */
-  on(module, event, callback, key = null) {
+  on(module: string, event: string, callback: (arg?: any) => any, key: string | null = null) {
     this.eventListeners.push({
       module,
       event,
@@ -121,15 +160,15 @@ class Modu {
 
   /**
    * Calls a method on another module
-   * @param {string} module                          The PascalCase name of the module to call
+   * @param {string} moduleName                      The PascalCase name of the module to call
    * @param {string} method                          The name of the method to call
    * @param {Object | string | number} params        Optional parameters to pass to the method. If an array is passed, each item in the array will be passed as a separate parameter. To pass an array as the only parameter, wrap it in double brackets, e.g. [[1, 2]]
    * @param {string} key                             An optional key to scope the module to
    */
-  call(module, method, params = null, key = null) {
+  call(moduleName: string, method: string, params: object | [] | string | number = null, key: string | null = null) {
     // Get all modules that match the name and key
-    const modules = this.app.getModulesByName(module, key);
-    let results = [];
+    const modules = this.app.getModulesByName(moduleName, key);
+    let results: any[] = [];
 
     // Call the method on each module
     modules.forEach(({ module }) => {
@@ -157,36 +196,35 @@ class Modu {
    * @param {string} name
    * @returns {string}
    */
-  getSelector(name) {
+  getSelector(name: string) {
     return `[${this.elementPrefix}="${name}"]`;
   }
 }
 
 class App {
-  constructor(options = {}) {
-    const {
-      importMethod,
-      initialModules = {},
-    } = options;
+  storage: StoredModu[] = [];
+  prefix = 'data-module-';
+  modulesReady: Promise<any[]> = null;
+  initialModules: {[key: string]: ModuConstructable} = {};
+  importMethod: (name: string) => Promise<any>;
 
-    this.storage = [];
-    this.modulesReady = null;
-    this.initialModules = initialModules;
-    this.prefix = 'data-module-';
+  constructor(options: AppOptions) {
+    const defaultOptions = {
+      initialModules: {},
+    };
+    Object.assign(this, defaultOptions, options);
 
     // Error if no import method is set
-    if (typeof importMethod !== 'function') {
+    if (typeof options.importMethod !== 'function') {
       console.error('Modu.App() is missing an "importMethod" option which is used to determine how to import modules.');
     }
-
-    this.importMethod = importMethod;
   }
 
   /**
    * Initializes all modules that have a DOM element in the passed container
-   * @param {HTMLElement} containerEl    The HTML element to initialize modules within
+   * @param {Element} containerEl    The HTML element to initialize modules within
    */
-  init(containerEl = document) {
+  init(containerEl: Element | Document = document) {
     const elements = this.getModuleElements(containerEl);
 
     // Init modules for all elements
@@ -202,16 +240,16 @@ class App {
 
   /**
    * Destroys all modules that have a DOM element in the passed container
-   * @param {HTMLElement} containerEl    The HTML element to destroy modules within
+   * @param {Element} containerEl    The HTML element to destroy modules within
    */
-  destroyModules(containerEl = document) {
+  destroyModules(containerEl: Element | Document = document) {
     const elements = this.getModuleElements(containerEl);
 
     // Init modules for all elements
     this.destroyModulesForElements(elements);
   }
 
-  getModuleElements(containerEl = document) {
+  getModuleElements(containerEl: Element | Document = document): Element[] {
     const allElements = containerEl.querySelectorAll('*');
     return Array.from(allElements).filter(el => {
       const names = this.getModuleNamesFromElement(el);
@@ -223,7 +261,7 @@ class App {
     });
   }
 
-  initModulesForElements(elements) {
+  initModulesForElements(elements: Element[]) {
     const modulePromises = elements.map(el => {
       return this.initModules(el);
     });
@@ -231,8 +269,8 @@ class App {
     this.modulesReady = Promise.allSettled(modulePromises);
   }
 
-  destroyModulesForElements(elements) {
-    let modulesToDestroy = [];
+  destroyModulesForElements(elements: Element[]) {
+    let modulesToDestroy: StoredModu[] = [];
 
     // Find matching modules for elements
     elements.forEach(el => {
@@ -254,8 +292,8 @@ class App {
     }
   }
 
-  initModules(element) {
-    let readyPromises = [];
+  initModules(element: Element) {
+    let readyPromises: void[] = [];
 
     // Get all names for the element
     const names = this.getModuleNamesFromElement(element);
@@ -289,9 +327,9 @@ class App {
     });
 
     return Promise.all(readyPromises);
-  }
+  };
 
-  addModule(ImportedModule, details = {}) {
+  addModule(ImportedModule: ModuConstructable, details: {element: Element, name: string, key?: string }) {
     const {
       element,
       name,
@@ -319,8 +357,8 @@ class App {
     return module;
   }
 
-  getModuleNamesFromElement(element) {
-    let results = [];
+  getModuleNamesFromElement(element: Element) {
+    let results: { name: string, key?: string }[] = [];
 
     Array.from(element.attributes).forEach(attr => {
       if (attr.name.startsWith(this.prefix)) {
@@ -334,7 +372,7 @@ class App {
     return results;
   }
 
-  getModulesForElement(element, name = null) {
+  getModulesForElement(element: Element, name: string = null): StoredModu[] {
     return this.storage.filter(module => {
       const isSameElement = module.el === element;
       const isSameName = name ? module.name === name : true;
@@ -342,7 +380,7 @@ class App {
     });
   }
 
-  getModulesByName(name, key = null) {
+  getModulesByName(name: string, key: string = null): StoredModu[] {
     return this.storage.filter(mod => {
       const isSameName = toKebabCase(name) === toKebabCase(mod.name);
       const isSameKey = key ? mod.key === key : true;
