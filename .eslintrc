@@ -3,5 +3,8 @@
     "plugin:@typescript-eslint/recommended",
     "@malven"
   ],
-  "parser": "@typescript-eslint/parser"
+  "parser": "@typescript-eslint/parser",
+  "rules": {
+    "@typescript-eslint/no-empty-function": "off"
+  }
 }

@@ -17,7 +17,7 @@ export const toKebabCase = (name: string): string => {
 };
 
 /**
- * Converts all all casings of a module name to be consistent
+ * Converts all casings of a module name to be consistent
  * @param {string} name
  */
 export const toPascalCase = (name: string): string => {
@@ -48,8 +48,8 @@ interface ModuConstructable {
 }
 
 type AppOptions = {
-  importMethod: (module: {}) => {};
-  initialModules?: {};
+  importMethod: (module: any) => {};
+  initialModules?: any;
 }
 
 type StoredModu = {
@@ -168,7 +168,7 @@ class Modu {
   call(moduleName: string, method: string, params: object | [] | string | number = null, key: string | null = null) {
     // Get all modules that match the name and key
     const modules = this.app.getModulesByName(moduleName, key);
-    let results: any[] = [];
+    const results: any[] = [];
 
     // Call the method on each module
     modules.forEach(({ module }) => {
@@ -293,7 +293,7 @@ class App {
   }
 
   initModules(element: Element) {
-    let readyPromises: void[] = [];
+    const readyPromises: void[] = [];
 
     // Get all names for the element
     const names = this.getModuleNamesFromElement(element);
@@ -327,7 +327,7 @@ class App {
     });
 
     return Promise.all(readyPromises);
-  };
+  }
 
   addModule(ImportedModule: ModuConstructable, details: {element: Element, name: string, key?: string }) {
     const {
@@ -358,7 +358,7 @@ class App {
   }
 
   getModuleNamesFromElement(element: Element) {
-    let results: { name: string, key?: string }[] = [];
+    const results: { name: string, key?: string }[] = [];
 
     Array.from(element.attributes).forEach(attr => {
       if (attr.name.startsWith(this.prefix)) {
