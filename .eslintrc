@@ -1,10 +1,7 @@
 {
-  "extends": [
-    "plugin:@typescript-eslint/recommended",
-    "@malven"
-  ],
   "parser": "@typescript-eslint/parser",
-  "rules": {
-    "@typescript-eslint/no-empty-function": "off"
-  }
+  "extends": [
+    "@malven",
+    "@malven/typescript"
+  ]
 }

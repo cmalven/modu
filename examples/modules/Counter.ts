@@ -1,7 +1,7 @@
 import { Modu } from '../../index';
 
 class Counter extends Modu {
-  constructor(m) {
+  constructor(m: Modu) {
     super(m);
 
     this.count = 0;
@@ -22,7 +22,7 @@ class Counter extends Modu {
     this.moreEl.addEventListener('click', this.handleMore);
   };
 
-  change = (change) => {
+  change = (change: -1 | 1) => {
     this.count += change;
     if (this.count < this.min) this.count = this.min;
     if (this.count > this.max) this.count = this.max;

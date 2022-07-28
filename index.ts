@@ -107,14 +107,6 @@ class Modu {
     return searchElement.getAttribute(this.dataPrefix + name);
   }
 
-  init() {}
-
-  /**
-   * This should contain any cleanup code necessary when the module is removed.
-   * It will be called automatically when certain `App` methods are called.
-   */
-  cleanup() {}
-
   /**
    * Broadcast an event that can be listened for by other modules using `.on()`
    * @param {string} event         The name of the event
