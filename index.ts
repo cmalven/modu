@@ -278,7 +278,7 @@ class App {
         return mod.name === currentModule.name && mod.el === currentModule.el;
       });
       if (matchingModuleToDestroy) {
-        matchingModuleToDestroy.module.cleanup();
+        if (matchingModuleToDestroy.module.cleanup) matchingModuleToDestroy.module.cleanup();
         this.storage.splice(idx, 1);
       }
     }

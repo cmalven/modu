@@ -3,6 +3,39 @@ import { App, toKebabCase, toPascalCase } from '../index';
 import { JSDOM } from 'jsdom';
 import * as initialModules from '../examples/modules/initial';
 
+/*
+test('Math.sqrt()', () => {
+  expect(Math.sqrt(4)).toBe(2);
+  expect(Math.sqrt(144)).toBe(12);
+  expect(Math.sqrt(2)).toBe(Math.SQRT2);
+});
+
+test('JSON', () => {
+  const input = {
+    foo: 'hello',
+    bar: 'world',
+  };
+
+  const output = JSON.stringify(input);
+
+  expect(output).eq('{"foo":"hello","bar":"world"}');
+  assert.deepEqual(JSON.parse(output), input, 'matches original');
+});
+ */
+
+
+declare global {
+  namespace NodeJS {
+    interface Global {
+      document: Document;
+      window: Window;
+      navigator: Navigator;
+    }
+  }
+}
+
+const globalAny:any = global;
+
 const initApp = (containerEl = document) => {
   const app = new App({
     importMethod: module => import('../examples/modules/' + module + '.js'),
@@ -62,8 +95,8 @@ const getCommonDom = () => {
      </html>`,
     { url: 'http://localhost' },
   );
-  global.document = dom.window.document;
-  global.window = global.document.defaultView;
+  globalAny.document = dom.window.document;
+  globalAny.window = global.document.defaultView;
 };
 
 const getBodyDom = (markup = '') => {
@@ -78,8 +111,8 @@ const getBodyDom = (markup = '') => {
      </html>`,
     { url: 'http://localhost' },
   );
-  global.document = dom.window.document;
-  global.window = global.document.defaultView;
+  globalAny.document = dom.window.document;
+  globalAny.window = global.document.defaultView;
 };
 
 //
@@ -89,7 +122,7 @@ const getBodyDom = (markup = '') => {
 
 describe('App', () => {
   describe('init()', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -119,7 +152,7 @@ describe('App', () => {
   });
 
   describe('init() with initial modules', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -137,7 +170,7 @@ describe('App', () => {
   });
 
   describe('destroy()', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -155,7 +188,7 @@ describe('App', () => {
 
 describe('Modu', () => {
   describe('creation', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -182,7 +215,7 @@ describe('Modu', () => {
   });
 
   describe('creation with multiple containers', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getBodyDom(getCountersMarkup());
@@ -232,7 +265,7 @@ describe('Modu', () => {
   });
 
   describe('creating multiple modules per element', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getBodyDom();
@@ -250,7 +283,7 @@ describe('Modu', () => {
   });
 
   describe('get() and getAll()', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -275,7 +308,7 @@ describe('Modu', () => {
   });
 
   describe('getData();', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -298,7 +331,7 @@ describe('Modu', () => {
   });
 
   describe('on() and emit()', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -332,7 +365,7 @@ describe('Modu', () => {
   });
 
   describe('on() and emit() on same element', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getBodyDom();
@@ -355,7 +388,7 @@ describe('Modu', () => {
   });
 
   describe('call()', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -407,7 +440,7 @@ describe('Modu', () => {
   });
 
   describe('getSelector()', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
