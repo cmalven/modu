@@ -136,7 +136,7 @@ describe('App', () => {
       // Modules should be ready after a short wait
       const result = await app.modulesReady;
       assert.lengthOf(app.storage, 3);
-      assert.lengthOf(result, 3);
+      if (result?.length) assert.lengthOf(result, 3);
     });
 
     it('does not duplicate existing modules if called twice', async () => {
@@ -165,7 +165,7 @@ describe('App', () => {
       // Modules should be ready after a short wait
       const result = await app.modulesReady;
       assert.lengthOf(app.storage, 3);
-      assert.lengthOf(result, 3);
+      if (result?.length) assert.lengthOf(result, 3);
     });
   });
 

@@ -193,7 +193,7 @@ app.init();
 
 ## APIs
 
-### App
+### Modu App
 
 An `App` helps orchestrate all collaboration between modules, including setup, teardown, and communication.
 
@@ -203,7 +203,7 @@ An `App` helps orchestrate all collaboration between modules, including setup, t
 | `destroyModules(containerEl = document)` | Destroys all modules within a container | `app.destroyModules()` or `app.destroyModules(document.querySelector('.header')` |
 | `destroy()` | Completely destroys the app and all modules | `app.destroy()` |
 
-### Module
+### Modu Module
 
 An individual module should extend `Modu` and inherits all of its common behavior, including data access, DOM querying, event listening/emitting, and teardown.
 

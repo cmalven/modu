@@ -108,7 +108,7 @@ class Modu {
    * @param {Element} el   An optional child element to get the value on
    * @returns {string}
    */
-  getData(name: string, el?: Element) {
+  getData(name: string, el?: Element | null) {
     const searchElement = el ? el : this.el;
     return searchElement.getAttribute(this.dataPrefix + name);
   }
@@ -220,7 +220,9 @@ class App {
    * Initializes all modules that have a DOM element in the passed-in container
    * @param {Element} containerEl    The HTML element to initialize modules within
    */
-  init(containerEl: Element | Document = document) {
+  init(containerEl: Element | Document | null = document) {
+    if (!containerEl) return console.warn('Modu.App.init() was passed an invalid container element.');
+
     const elements = this.getModuleElements(containerEl);
 
     // Init modules for all elements
@@ -238,7 +240,9 @@ class App {
    * Destroys all modules that have a DOM element in the passed-in container
    * @param {Element} containerEl    The HTML element to destroy modules within
    */
-  destroyModules(containerEl: Element | Document = document) {
+  destroyModules(containerEl: Element | Document | null = document) {
+    if (!containerEl) return console.warn('Modu.App.destroyModules() was passed an invalid container element.');
+
     const elements = this.getModuleElements(containerEl);
 
     // Init modules for all elements
