@@ -297,8 +297,8 @@ describe('Modu', () => {
       // Retrieve one element
       const lessEl = counter.get('less');
       const moreEl = counter.get('more');
-      assert.equal(lessEl.tagName, 'BUTTON', 'less is an button element');
-      assert.equal(moreEl.tagName, 'BUTTON', 'more is an button element');
+      assert.equal(lessEl?.tagName, 'BUTTON', 'less is an button element');
+      assert.equal(moreEl?.tagName, 'BUTTON', 'more is an button element');
 
       // Retrieve all elements
       const lessEls = counter.getAll('less');

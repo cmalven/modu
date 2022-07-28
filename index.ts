@@ -36,10 +36,14 @@ type ModuOptions = {
   app: App,
 }
 
+type ModuReadyPromise = Promise<void | Modu>;
+
+type CallbackData = string | number | boolean | [] | object;
+
 type ModuEventListener = {
   module: string,
   event: string,
-  callback?: (data?: any) => void,
+  callback: (data?: CallbackData) => void,
   key?: string,
 }
 
@@ -47,9 +51,12 @@ interface ModuConstructable {
   new (options: ModuOptions): Modu;
 }
 
+type AppInitialModules = { [key: string]: any };
+type AppImportMethod = (name: string) => Promise<any>;
+
 type AppOptions = {
-  importMethod: (module: any) => {};
-  initialModules?: any;
+  importMethod: AppImportMethod;
+  initialModules?: AppInitialModules;
 }
 
 type StoredModu = {
@@ -66,16 +73,15 @@ class Modu {
   elementPrefix: string;
   dataPrefix: string;
   app: App;
-  eventListeners: ModuEventListener[];
+  eventListeners: ModuEventListener[] = [];
   [methodKey: string]: any; // Necessary  to access arbitrary methods in `.call()`
 
   constructor(options: ModuOptions) {
-    Object.assign(this, {
-      ...options,
-      eventListeners: [],
-      elementPrefix: 'data-' + options.name,
-      dataPrefix: 'data-' + options.name + '-',
-    });
+    this.name = options.name;
+    this.el = options.el;
+    this.app = options.app;
+    this.elementPrefix = 'data-' + options.name;
+    this.dataPrefix = 'data-' + options.name + '-';
   }
 
   /**
@@ -92,7 +98,7 @@ class Modu {
    * @param {string} name
    * @returns {NodeListOf<ElementTagNameMap[string]> | NodeListOf<Element> | NodeListOf<SVGElementTagNameMap[string]>}
    */
-  getAll(name: string): NodeList {
+  getAll(name: string) {
     return this.el.querySelectorAll(`[${this.elementPrefix}="${name}"]`);
   }
 
@@ -102,7 +108,7 @@ class Modu {
    * @param {Element} el   An optional child element to get the value on
    * @returns {string}
    */
-  getData(name: string, el: Element = null) {
+  getData(name: string, el?: Element) {
     const searchElement = el ? el : this.el;
     return searchElement.getAttribute(this.dataPrefix + name);
   }
@@ -112,7 +118,7 @@ class Modu {
    * @param {string} event         The name of the event
    * @param {any} data             Any data to associate, will be passed to the callback of `.on()`
    */
-  emit(event: string, data: any) {
+  emit(event: string, data: CallbackData) {
     this.app.storage.forEach(({ module }) => {
       const allListeners = module.eventListeners;
 
@@ -138,10 +144,10 @@ class Modu {
    * Add a listener for events fired in another module using `.emit()`
    * @param {string} module        The pascal-cased name of the module to listen to
    * @param {string} event         The name of the event to listen for
-   * @param {function} callback    The callback function to fire when the even is heard. Will receive any event data as the first and only parameter.
-   * @param {string} key         An optional key to scope events to
+   * @param {function} callback    The callback function to fire when the event is heard. Will receive any event data as the first and only parameter.
+   * @param {string} key           An optional key to scope events to
    */
-  on(module: string, event: string, callback: (arg?: any) => any, key: string | null = null) {
+  on(module: string, event: string, callback: (arg?: CallbackData) => void, key?: string) {
     this.eventListeners.push({
       module,
       event,
@@ -157,10 +163,10 @@ class Modu {
    * @param {Object | string | number} params        Optional parameters to pass to the method. If an array is passed, each item in the array will be passed as a separate parameter. To pass an array as the only parameter, wrap it in double brackets, e.g. [[1, 2]]
    * @param {string} key                             An optional key to scope the module to
    */
-  call(moduleName: string, method: string, params: object | [] | string | number = null, key: string | null = null) {
+  call(moduleName: string, method: string, params: object | [] | string | number = [], key?: string) {
     // Get all modules that match the name and key
     const modules = this.app.getModulesByName(moduleName, key);
-    const results: any[] = [];
+    const results: CallbackData[] = [];
 
     // Call the method on each module
     modules.forEach(({ module }) => {
@@ -196,15 +202,13 @@ class Modu {
 class App {
   storage: StoredModu[] = [];
   prefix = 'data-module-';
-  modulesReady: Promise<any[]> = null;
-  initialModules: {[key: string]: ModuConstructable} = {};
-  importMethod: (name: string) => Promise<any>;
+  modulesReady: Promise<any[]> | null = null;
+  initialModules: AppInitialModules = {};
+  importMethod: AppImportMethod;
 
   constructor(options: AppOptions) {
-    const defaultOptions = {
-      initialModules: {},
-    };
-    Object.assign(this, defaultOptions, options);
+    this.initialModules = options.initialModules ?? {};
+    this.importMethod = options.importMethod;
 
     // Error if no import method is set
     if (typeof options.importMethod !== 'function') {
@@ -213,7 +217,7 @@ class App {
   }
 
   /**
-   * Initializes all modules that have a DOM element in the passed container
+   * Initializes all modules that have a DOM element in the passed-in container
    * @param {Element} containerEl    The HTML element to initialize modules within
    */
   init(containerEl: Element | Document = document) {
@@ -231,7 +235,7 @@ class App {
   }
 
   /**
-   * Destroys all modules that have a DOM element in the passed container
+   * Destroys all modules that have a DOM element in the passed-in container
    * @param {Element} containerEl    The HTML element to destroy modules within
    */
   destroyModules(containerEl: Element | Document = document) {
@@ -285,14 +289,18 @@ class App {
   }
 
   initModules(element: Element) {
-    const readyPromises: void[] = [];
+    const readyPromises: ModuReadyPromise[] = [];
 
     // Get all names for the element
     const names = this.getModuleNamesFromElement(element);
+
     names.forEach(({ name, key }) => {
       // Look for an existing module already created for this element
       const existingModules = this.getModulesForElement(element, name);
-      if (existingModules.length) return readyPromises.push(new Promise(res => res()));
+      if (existingModules.length) {
+        readyPromises.push(new Promise(res => res()));
+        return;
+      }
 
       const promise = new Promise((res, rej) => {
         // Get the name of the module
@@ -315,7 +323,7 @@ class App {
           rej();
         });
       });
-      readyPromises.push(promise);
+      readyPromises.push(promise as ModuReadyPromise);
     });
 
     return Promise.all(readyPromises);
@@ -364,7 +372,7 @@ class App {
     return results;
   }
 
-  getModulesForElement(element: Element, name: string = null): StoredModu[] {
+  getModulesForElement(element: Element, name?: string): StoredModu[] {
     return this.storage.filter(module => {
       const isSameElement = module.el === element;
       const isSameName = name ? module.name === name : true;
@@ -372,7 +380,7 @@ class App {
     });
   }
 
-  getModulesByName(name: string, key: string = null): StoredModu[] {
+  getModulesByName(name: string, key?: string): StoredModu[] {
     return this.storage.filter(mod => {
       const isSameName = toKebabCase(name) === toKebabCase(mod.name);
       const isSameKey = key ? mod.key === key : true;
