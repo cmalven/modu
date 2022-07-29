@@ -2,5 +2,9 @@
 node_modules
 coverage
 
+# Dist
+dist/examples
+dist/test
+
 # Docs
 docs/.vitepress/dist
