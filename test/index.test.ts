@@ -125,7 +125,6 @@ describe('App', () => {
 
       // Modules should be ready after a short wait
       const result = await app.modulesReady;
-      console.log(result);
       assert.lengthOf(app.storage, 3);
       if (result?.length) assert.lengthOf(result, 3);
     });
