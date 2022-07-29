@@ -29,7 +29,7 @@ export const toPascalCase = (name: string): string => {
     .join('');
 };
 
-type ModuOptions = {
+export type ModuOptions = {
   name: string,
   key?: string,
   el: Element,
@@ -38,7 +38,7 @@ type ModuOptions = {
 
 type ModuReadyPromise = Promise<void | Modu>;
 
-type CallbackData = string | number | boolean | [] | object;
+type CallbackData = any; // Allow any data to be passed to or returned from callbacks
 
 type ModuEventListener = {
   module: string,
@@ -48,11 +48,15 @@ type ModuEventListener = {
 }
 
 interface ModuConstructable {
-  new (options: ModuOptions): Modu;
+  new (m: ModuOptions): Modu;
+}
+
+interface ImportedModuModule {
+  default: ModuConstructable;
 }
 
 type AppInitialModules = { [key: string]: ModuConstructable };
-type AppImportMethod = (name: string) => Promise<Modu>;
+type AppImportMethod = (name: string) => Promise<ImportedModuModule>;
 
 type AppOptions = {
   importMethod: AppImportMethod;
@@ -74,7 +78,9 @@ class Modu {
   dataPrefix: string;
   app: App;
   eventListeners: ModuEventListener[] = [];
-  [methodKey: string]: any; // Necessary  to access arbitrary methods in `.call()`
+  init?: () => void;
+  cleanup?: () => void;
+  [methodKey: string]: unknown; // Necessary because module could have any method that is accessed via `.call()`
 
   constructor(options: ModuOptions) {
     this.name = options.name;
@@ -147,7 +153,7 @@ class Modu {
    * @param {function} callback    The callback function to fire when the event is heard. Will receive any event data as the first and only parameter.
    * @param {string} key           An optional key to scope events to
    */
-  on(module: string, event: string, callback: (arg?: CallbackData) => void, key?: string) {
+  on(module: string, event: string, callback: (arg?: CallbackData) => CallbackData, key?: string) {
     this.eventListeners.push({
       module,
       event,
@@ -163,7 +169,7 @@ class Modu {
    * @param {Object | string | number} params        Optional parameters to pass to the method. If an array is passed, each item in the array will be passed as a separate parameter. To pass an array as the only parameter, wrap it in double brackets, e.g. [[1, 2]]
    * @param {string} key                             An optional key to scope the module to
    */
-  call(moduleName: string, method: string, params: object | [] | string | number = [], key?: string) {
+  call(moduleName: string, method: string, params: CallbackData = [], key?: string) {
     // Get all modules that match the name and key
     const modules = this.app.getModulesByName(moduleName, key);
     const results: CallbackData[] = [];
@@ -355,7 +361,7 @@ class App {
     });
 
     // Initiate the module
-    module.init();
+    if (module.init) module.init();
 
     // Return the added module
     return module;

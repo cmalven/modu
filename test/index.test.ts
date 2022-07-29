@@ -24,17 +24,7 @@ test('JSON', () => {
  */
 
 
-declare global {
-  namespace NodeJS {
-    interface Global {
-      document: Document;
-      window: Window;
-      navigator: Navigator;
-    }
-  }
-}
-
-const globalAny:any = global;
+const globalAny: any = global;
 
 const initApp = (containerEl = document) => {
   const app = new App({
@@ -135,6 +125,7 @@ describe('App', () => {
 
       // Modules should be ready after a short wait
       const result = await app.modulesReady;
+      console.log(result);
       assert.lengthOf(app.storage, 3);
       if (result?.length) assert.lengthOf(result, 3);
     });

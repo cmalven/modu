@@ -1,11 +1,11 @@
-import { Modu } from '../../index';
+import { Modu, ModuOptions } from '../../index';
 
 class Scroller extends Modu {
-  constructor(m: Modu) {
+  constructor(m: ModuOptions) {
     super(m);
   }
 
-  init = () => {
+  override init = () => {
     window.addEventListener('scroll', this.update);
   };
 

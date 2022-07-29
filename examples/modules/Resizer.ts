@@ -1,11 +1,11 @@
-import { Modu } from '../../index';
+import { Modu, ModuOptions } from '../../index';
 
 class Resizer extends Modu {
-  constructor(m: Modu) {
+  constructor(m: ModuOptions) {
     super(m);
   }
 
-  init = () => {
+  override init = () => {
     window.addEventListener('resize', this.update);
   };
 
