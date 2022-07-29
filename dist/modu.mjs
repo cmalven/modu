@@ -56,6 +56,10 @@ class Modu {
       key
     });
   }
+  init() {
+  }
+  cleanup() {
+  }
   call(moduleName, method, params = [], key) {
     const modules = this.app.getModulesByName(moduleName, key);
     const results = [];

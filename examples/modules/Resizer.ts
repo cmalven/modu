@@ -5,9 +5,9 @@ class Resizer extends Modu {
     super(m);
   }
 
-  override init = () => {
+  override init() {
     window.addEventListener('resize', this.update);
-  };
+  }
 
   update = () => {
     console.log('Window width', window.innerWidth);

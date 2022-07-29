@@ -5,9 +5,9 @@ class Scroller extends Modu {
     super(m);
   }
 
-  override init = () => {
+  override init() {
     window.addEventListener('scroll', this.update);
-  };
+  }
 
   update = () => {
     console.log('Window scroll', window.scrollY);

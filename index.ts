@@ -78,8 +78,6 @@ class Modu {
   dataPrefix: string;
   app: App;
   eventListeners: ModuEventListener[] = [];
-  init?: () => void;
-  cleanup?: () => void;
   [methodKey: string]: unknown; // Necessary because module could have any method that is accessed via `.call()`
 
   constructor(options: ModuOptions) {
@@ -160,6 +158,14 @@ class Modu {
       callback,
       key,
     });
+  }
+
+  init() {
+    // Handled by the module
+  }
+
+  cleanup() {
+    // Handled by the module
   }
 
   /**

@@ -25,10 +25,10 @@ class Counter extends Modu {
   /**
    * Will automatically be called when the module is loaded
    */
-  override init = () => {
+  override init() {
     this.lessEl?.addEventListener('click', this.handleLess);
     this.moreEl?.addEventListener('click', this.handleMore);
-  };
+  }
 
   change = (change: -1 | 1) => {
     this.count += change;

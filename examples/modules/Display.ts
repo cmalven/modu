@@ -9,10 +9,10 @@ class Display extends Modu {
     this.countEl = this.get('count');
   }
 
-  override init = () => {
+  override init() {
     // Listen for count to change in `Counter` and update the value
     this.on('Counter', 'change', this.update);
-  };
+  }
 
   update = (newValue: number) => {
     if (this.countEl) this.countEl.innerHTML = String(newValue);
