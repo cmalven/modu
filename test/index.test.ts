@@ -339,6 +339,8 @@ describe('Modu', () => {
       counter.emit('change', 'hello');
       counter.emit('change', 'modu');
       expect(callbackStub).toHaveBeenCalledTimes(2);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore Seem to be inaccurate type definitions for vitest
       assert.deepEqual(callbackStub.calls, [['hello'], ['modu']]);
     });
 
@@ -373,6 +375,8 @@ describe('Modu', () => {
       resizer.emit('update', 'hello');
       resizer.emit('update', 'modu');
       expect(callbackStub).toHaveBeenCalledTimes(2);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore Seem to be inaccurate type definitions for vitest
       assert.deepEqual(callbackStub.calls, [['hello'], ['modu']]);
     });
   });
@@ -391,7 +395,11 @@ describe('Modu', () => {
       const displayOne = app.getModulesByName('display')[0].module;
       const displayTwo = app.getModulesByName('display')[1].module;
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore Seem to be inaccurate type definitions for vitest
       const displayOneMethod = vi.spyOn(displayOne, 'update');
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore Seem to be inaccurate type definitions for vitest
       const displayTwoMethod = vi.spyOn(displayTwo, 'update');
 
       // Counter calls all displays
@@ -404,7 +412,11 @@ describe('Modu', () => {
 
       expect(displayOneMethod).toHaveBeenCalledTimes(2);
       expect(displayTwoMethod).toHaveBeenCalledTimes(1);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore Seem to be inaccurate type definitions for vitest
       assert.deepEqual(displayOneMethod.calls, [['all displays'], ['main display']]);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore Seem to be inaccurate type definitions for vitest
       assert.deepEqual(displayTwoMethod.calls, [['all displays']]);
     });
 
@@ -413,6 +425,8 @@ describe('Modu', () => {
       const counter = app.getModulesByName('counter')[0].module;
       console.error = vi.fn();
       counter.call('Display', 'foo');
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore Seem to be inaccurate type definitions for vitest
       expect(console.error.mock.calls[0][0]).toBe('Failed to call non-existent method "foo" on module "display"');
     });
 
@@ -420,6 +434,8 @@ describe('Modu', () => {
       await app.modulesReady;
       const counter = app.getModulesByName('counter')[0].module;
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore Seem to be inaccurate type definitions for vitest
       const counterMethod = vi.spyOn(counter, 'change');
 
       // Counter calls all displays
