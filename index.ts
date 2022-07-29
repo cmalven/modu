@@ -51,8 +51,8 @@ interface ModuConstructable {
   new (options: ModuOptions): Modu;
 }
 
-type AppInitialModules = { [key: string]: any };
-type AppImportMethod = (name: string) => Promise<any>;
+type AppInitialModules = { [key: string]: ModuConstructable };
+type AppImportMethod = (name: string) => Promise<Modu>;
 
 type AppOptions = {
   importMethod: AppImportMethod;
