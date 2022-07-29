@@ -4,8 +4,3 @@ coverage
 
 # Docs
 docs/.vitepress/dist
-
-# Examples
-dist
-dist-ssr
-*.local
