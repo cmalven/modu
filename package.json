@@ -1,8 +1,8 @@
 {
   "name": "@malven/modu",
-  "version": "2.0.0-beta.2",
+  "version": "2.0.0-beta.3",
   "description": "A simple, flexible system for working with DOM-based modules",
-  "main": "dist/modu.es.js",
+  "main": "dist/modu.mjs",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
