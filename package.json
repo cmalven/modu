@@ -1,9 +1,9 @@
 {
   "name": "@malven/modu",
-  "version": "2.0.0-beta.8",
+  "version": "2.0.0-beta.9",
   "description": "A simple, flexible system for working with DOM-based modules",
-  "main": "dist/modu.mjs",
-  "types": "dist/index.d.ts",
+  "main": "./dist/modu.mjs",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "vite",
     "build": "vite build && tsc --emitDeclarationOnly",
