@@ -16,6 +16,7 @@ title: Simple, flexible DOM-based modules
 - Modules can easily select scoped elements within them.
 - Custom data for a module can be specified on the DOM element.
 - Zero dependencies
+- Typescript support
 - Less than [2kB (minified + gzipped)](https://bundlephobia.com/result?p=@malven/modu)
 
 ## Getting Started
