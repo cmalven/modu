@@ -137,7 +137,7 @@ Finally, in your main `.js` file (e.g. `main.js`) create a module `App`. The onl
 import { App } from '@malven/modu';
 
 const app = new App({
-  importMethod: module => import(/* webpackChunkName: "[request]" */ './modules/' + module + '.js'),
+  importMethod: module => import('./modules/' + module + '.js'),
 });
 app.init();
 ```
