@@ -17,6 +17,7 @@ class Modu {
     this.name = options.name;
     this.el = options.el;
     this.app = options.app;
+    this.key = options.key;
     this.elementPrefix = "data-" + options.name;
     this.dataPrefix = "data-" + options.name + "-";
   }
@@ -199,7 +200,7 @@ class App {
       if (attr.name.startsWith(this.prefix)) {
         results.push({
           name: attr.name.replace(this.prefix, ""),
-          key: attr.value
+          key: attr.value.length ? attr.value : void 0
         });
       }
     });
