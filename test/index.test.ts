@@ -200,7 +200,7 @@ describe('Modu', () => {
 
       // Inspect displays
       assert.equal(displayOne.key, 'main', 'display one should have a key');
-      assert.equal(displayTwo.key, '', 'display two should not have a key');
+      assert.equal(displayTwo.key, undefined, 'display two should not have a key');
     });
   });
 
