@@ -16,6 +16,7 @@ title: Simple, flexible DOM-based modules
 - Modules can easily select scoped elements within them.
 - Custom data for a module can be specified on the DOM element.
 - Zero dependencies
+- Typescript support
 - Less than [2kB (minified + gzipped)](https://bundlephobia.com/result?p=@malven/modu)
 
 ## Getting Started
@@ -136,7 +137,7 @@ Finally, in your main `.js` file (e.g. `main.js`) create a module `App`. The onl
 import { App } from '@malven/modu';
 
 const app = new App({
-  importMethod: module => import(/* webpackChunkName: "[request]" */ './modules/' + module + '.js'),
+  importMethod: module => import(`./modules/${module}.js`),
 });
 app.init();
 ```
@@ -193,7 +194,7 @@ app.init();
 
 ## APIs
 
-### App
+### Modu App
 
 An `App` helps orchestrate all collaboration between modules, including setup, teardown, and communication.
 
@@ -203,7 +204,7 @@ An `App` helps orchestrate all collaboration between modules, including setup, t
 | `destroyModules(containerEl = document)` | Destroys all modules within a container | `app.destroyModules()` or `app.destroyModules(document.querySelector('.header')` |
 | `destroy()` | Completely destroys the app and all modules | `app.destroy()` |
 
-### Module
+### Modu Module
 
 An individual module should extend `Modu` and inherits all of its common behavior, including data access, DOM querying, event listening/emitting, and teardown.
 

@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    /* Visit https://aka.ms/tsconfig to read more about this file */
+
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
+
+    "declaration": true,
+    "declarationDir": "./dist/",
+    "emitDeclarationOnly": true,
+
+    "strict": true,
+     "noImplicitAny": true,
+     "alwaysStrict": true,
+     "noImplicitOverride": true,
+     "noImplicitReturns": true,
+     "noImplicitThis": true,
+     "noUnusedLocals": true,
+     "strictFunctionTypes": true,
+     "strictNullChecks": true,
+     "strictPropertyInitialization": true,
+  }
+}

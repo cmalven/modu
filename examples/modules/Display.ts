@@ -1,23 +1,23 @@
-import { Modu } from '../../index';
+import { Modu, ModuOptions } from '../../index';
 
 class Display extends Modu {
-  constructor(m) {
+  countEl: Element | null;
+
+  constructor(m: ModuOptions) {
     super(m);
 
     this.countEl = this.get('count');
   }
 
-  init = () => {
+  override init() {
     // Listen for count to change in `Counter` and update the value
     this.on('Counter', 'change', this.update);
   }
 
-  update = newValue => {
-    this.countEl.innerHTML = newValue;
+  update = (newValue: number) => {
+    if (this.countEl) this.countEl.innerHTML = String(newValue);
     return true;
-  }
-
-  cleanup = () => {}
+  };
 }
 
 export default Display;

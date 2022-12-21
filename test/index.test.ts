@@ -3,6 +3,29 @@ import { App, toKebabCase, toPascalCase } from '../index';
 import { JSDOM } from 'jsdom';
 import * as initialModules from '../examples/modules/initial';
 
+/*
+test('Math.sqrt()', () => {
+  expect(Math.sqrt(4)).toBe(2);
+  expect(Math.sqrt(144)).toBe(12);
+  expect(Math.sqrt(2)).toBe(Math.SQRT2);
+});
+
+test('JSON', () => {
+  const input = {
+    foo: 'hello',
+    bar: 'world',
+  };
+
+  const output = JSON.stringify(input);
+
+  expect(output).eq('{"foo":"hello","bar":"world"}');
+  assert.deepEqual(JSON.parse(output), input, 'matches original');
+});
+ */
+
+
+const globalAny: any = global;
+
 const initApp = (containerEl = document) => {
   const app = new App({
     importMethod: module => import('../examples/modules/' + module + '.js'),
@@ -62,8 +85,8 @@ const getCommonDom = () => {
      </html>`,
     { url: 'http://localhost' },
   );
-  global.document = dom.window.document;
-  global.window = global.document.defaultView;
+  globalAny.document = dom.window.document;
+  globalAny.window = global.document.defaultView;
 };
 
 const getBodyDom = (markup = '') => {
@@ -78,8 +101,8 @@ const getBodyDom = (markup = '') => {
      </html>`,
     { url: 'http://localhost' },
   );
-  global.document = dom.window.document;
-  global.window = global.document.defaultView;
+  globalAny.document = dom.window.document;
+  globalAny.window = global.document.defaultView;
 };
 
 //
@@ -89,7 +112,7 @@ const getBodyDom = (markup = '') => {
 
 describe('App', () => {
   describe('init()', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -103,7 +126,7 @@ describe('App', () => {
       // Modules should be ready after a short wait
       const result = await app.modulesReady;
       assert.lengthOf(app.storage, 3);
-      assert.lengthOf(result, 3);
+      if (result?.length) assert.lengthOf(result, 3);
     });
 
     it('does not duplicate existing modules if called twice', async () => {
@@ -119,7 +142,7 @@ describe('App', () => {
   });
 
   describe('init() with initial modules', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -132,12 +155,12 @@ describe('App', () => {
       // Modules should be ready after a short wait
       const result = await app.modulesReady;
       assert.lengthOf(app.storage, 3);
-      assert.lengthOf(result, 3);
+      if (result?.length) assert.lengthOf(result, 3);
     });
   });
 
   describe('destroy()', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -155,7 +178,7 @@ describe('App', () => {
 
 describe('Modu', () => {
   describe('creation', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -177,12 +200,12 @@ describe('Modu', () => {
 
       // Inspect displays
       assert.equal(displayOne.key, 'main', 'display one should have a key');
-      assert.equal(displayTwo.key, '', 'display two should not have a key');
+      assert.equal(displayTwo.key, undefined, 'display two should not have a key');
     });
   });
 
   describe('creation with multiple containers', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getBodyDom(getCountersMarkup());
@@ -232,7 +255,7 @@ describe('Modu', () => {
   });
 
   describe('creating multiple modules per element', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getBodyDom();
@@ -250,7 +273,7 @@ describe('Modu', () => {
   });
 
   describe('get() and getAll()', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -264,8 +287,8 @@ describe('Modu', () => {
       // Retrieve one element
       const lessEl = counter.get('less');
       const moreEl = counter.get('more');
-      assert.equal(lessEl.tagName, 'BUTTON', 'less is an button element');
-      assert.equal(moreEl.tagName, 'BUTTON', 'more is an button element');
+      assert.equal(lessEl?.tagName, 'BUTTON', 'less is an button element');
+      assert.equal(moreEl?.tagName, 'BUTTON', 'more is an button element');
 
       // Retrieve all elements
       const lessEls = counter.getAll('less');
@@ -275,7 +298,7 @@ describe('Modu', () => {
   });
 
   describe('getData();', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -298,7 +321,7 @@ describe('Modu', () => {
   });
 
   describe('on() and emit()', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -316,6 +339,8 @@ describe('Modu', () => {
       counter.emit('change', 'hello');
       counter.emit('change', 'modu');
       expect(callbackStub).toHaveBeenCalledTimes(2);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore Seem to be inaccurate type definitions for vitest
       assert.deepEqual(callbackStub.calls, [['hello'], ['modu']]);
     });
 
@@ -332,7 +357,7 @@ describe('Modu', () => {
   });
 
   describe('on() and emit() on same element', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getBodyDom();
@@ -350,12 +375,14 @@ describe('Modu', () => {
       resizer.emit('update', 'hello');
       resizer.emit('update', 'modu');
       expect(callbackStub).toHaveBeenCalledTimes(2);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore Seem to be inaccurate type definitions for vitest
       assert.deepEqual(callbackStub.calls, [['hello'], ['modu']]);
     });
   });
 
   describe('call()', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
@@ -368,7 +395,11 @@ describe('Modu', () => {
       const displayOne = app.getModulesByName('display')[0].module;
       const displayTwo = app.getModulesByName('display')[1].module;
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore Seem to be inaccurate type definitions for vitest
       const displayOneMethod = vi.spyOn(displayOne, 'update');
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore Seem to be inaccurate type definitions for vitest
       const displayTwoMethod = vi.spyOn(displayTwo, 'update');
 
       // Counter calls all displays
@@ -381,7 +412,11 @@ describe('Modu', () => {
 
       expect(displayOneMethod).toHaveBeenCalledTimes(2);
       expect(displayTwoMethod).toHaveBeenCalledTimes(1);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore Seem to be inaccurate type definitions for vitest
       assert.deepEqual(displayOneMethod.calls, [['all displays'], ['main display']]);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore Seem to be inaccurate type definitions for vitest
       assert.deepEqual(displayTwoMethod.calls, [['all displays']]);
     });
 
@@ -390,6 +425,8 @@ describe('Modu', () => {
       const counter = app.getModulesByName('counter')[0].module;
       console.error = vi.fn();
       counter.call('Display', 'foo');
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore Seem to be inaccurate type definitions for vitest
       expect(console.error.mock.calls[0][0]).toBe('Failed to call non-existent method "foo" on module "display"');
     });
 
@@ -397,6 +434,8 @@ describe('Modu', () => {
       await app.modulesReady;
       const counter = app.getModulesByName('counter')[0].module;
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore Seem to be inaccurate type definitions for vitest
       const counterMethod = vi.spyOn(counter, 'change');
 
       // Counter calls all displays
@@ -407,7 +446,7 @@ describe('Modu', () => {
   });
 
   describe('getSelector()', () => {
-    let app;
+    let app: App;
 
     beforeEach(() => {
       getCommonDom();
