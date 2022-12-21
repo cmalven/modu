@@ -1,3 +1,9 @@
+var __defProp = Object.defineProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => {
+  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
 const toKebabCase = (name) => {
   return name.split("").map((letter) => {
     if (/[A-Z]/.test(letter)) {
@@ -13,7 +19,13 @@ const toPascalCase = (name) => {
 };
 class Modu {
   constructor(options) {
-    this.eventListeners = [];
+    __publicField(this, "name");
+    __publicField(this, "key");
+    __publicField(this, "el");
+    __publicField(this, "elementPrefix");
+    __publicField(this, "dataPrefix");
+    __publicField(this, "app");
+    __publicField(this, "eventListeners", []);
     this.name = options.name;
     this.el = options.el;
     this.app = options.app;
@@ -84,11 +96,12 @@ class Modu {
 }
 class App {
   constructor(options) {
+    __publicField(this, "storage", []);
+    __publicField(this, "prefix", "data-module-");
+    __publicField(this, "modulesReady", null);
+    __publicField(this, "initialModules", {});
+    __publicField(this, "importMethod");
     var _a;
-    this.storage = [];
-    this.prefix = "data-module-";
-    this.modulesReady = null;
-    this.initialModules = {};
     this.initialModules = (_a = options.initialModules) != null ? _a : {};
     this.importMethod = options.importMethod;
     if (typeof options.importMethod !== "function") {
