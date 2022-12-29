@@ -131,7 +131,7 @@ export default Display;
 
 ### Initiate modules
 
-Finally, in your main `.js` file (e.g. `main.js`) create a module `App`. The only required option for `App` is `importMethod`, which tells Modu how to dynamically import modules and smooths over path issues in various dynamic import implementations (such as Webpack). The below example uses a Webpack comment to generate human-readable chunk names, but this is specific to Webpack and completely optional.
+Finally, in your main `.js` file (e.g. `main.js`) create a module `App`. The only required option for `App` is `importMethod`, which tells Modu how to dynamically import modules and smooths over path issues in various dynamic import implementations.
 
 ```js
 import { App } from '@malven/modu';
@@ -186,7 +186,7 @@ import * as initialModules from './modules/initial';
 
 const app = new App({
   initialModules,
-  importMethod: module => import('./modules/' + module + '.js'),
+  importMethod: module => import(`./modules/${module}.js`),
 });
 app.init();
 
