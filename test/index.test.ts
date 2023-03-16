@@ -310,8 +310,8 @@ describe('Modu', () => {
       const counter = app.getModulesByName('counter')[0].module;
       const min = counter.getData('min');
       const max = counter.getData('max');
-      assert.equal(min, '-10');
-      assert.equal(max, '10');
+      assert.equal(min, -10);
+      assert.equal(max, 10);
 
       // Get a value on a child element
       const lessEl = counter.get('less');

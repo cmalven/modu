@@ -6,6 +6,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
 
     "declaration": true,
     "declarationDir": "./dist/",

@@ -18,6 +18,7 @@ const toPascalCase = (name) => {
   }).join("");
 };
 class Modu {
+  // Necessary because module could have any method that is accessed via `.call()`
   constructor(options) {
     __publicField(this, "name");
     __publicField(this, "key");
@@ -33,16 +34,40 @@ class Modu {
     this.elementPrefix = "data-" + options.name;
     this.dataPrefix = "data-" + options.name + "-";
   }
+  /**
+   * Returns the first child element of the module that matches the passed name
+   * @param {string} name
+   * @returns {HTMLElement | null}
+   */
   get(name) {
     return this.el.querySelector(`[${this.elementPrefix}="${name}"]`);
   }
+  /**
+   * Returns all child elements of the module that match the passed name
+   * @param {string} name
+   * @returns {NodeListOf<ElementTagNameMap[string]> | NodeListOf<Element> | NodeListOf<SVGElementTagNameMap[string]>}
+   */
   getAll(name) {
     return this.el.querySelectorAll(`[${this.elementPrefix}="${name}"]`);
   }
+  /**
+   * Retrieve the value of a data attribute stored on the modules element
+   * @param {string} name      The name identifier for the value to get
+   * @param {Element} el   An optional child element to get the value on
+   * @returns {string}
+   */
   getData(name, el) {
     const searchElement = el ? el : this.el;
-    return searchElement.getAttribute(this.dataPrefix + name);
+    const value = searchElement.getAttribute(this.dataPrefix + name);
+    if (!isNaN(Number(value)))
+      return Number(value);
+    return value;
   }
+  /**
+   * Broadcast an event that can be listened for by other modules using `.on()`
+   * @param {string} event         The name of the event
+   * @param {any} data             Any data to associate, will be passed to the callback of `.on()`
+   */
   emit(event, data) {
     this.app.storage.forEach(({ module }) => {
       const allListeners = module.eventListeners;
@@ -61,6 +86,13 @@ class Modu {
       });
     });
   }
+  /**
+   * Add a listener for events fired in another module using `.emit()`
+   * @param {string} module        The pascal-cased name of the module to listen to
+   * @param {string} event         The name of the event to listen for
+   * @param {function} callback    The callback function to fire when the event is heard. Will receive any event data as the first and only parameter.
+   * @param {string} key           An optional key to scope events to
+   */
   on(module, event, callback, key) {
     this.eventListeners.push({
       module,
@@ -73,6 +105,13 @@ class Modu {
   }
   cleanup() {
   }
+  /**
+   * Calls a method on another module
+   * @param {string} moduleName                      The PascalCase name of the module to call
+   * @param {string} method                          The name of the method to call
+   * @param {Object | string | number} params        Optional parameters to pass to the method. If an array is passed, each item in the array will be passed as a separate parameter. To pass an array as the only parameter, wrap it in double brackets, e.g. [[1, 2]]
+   * @param {string} key                             An optional key to scope the module to
+   */
   call(moduleName, method, params = [], key) {
     const modules = this.app.getModulesByName(moduleName, key);
     const results = [];
@@ -90,6 +129,11 @@ class Modu {
     });
     return results.length === 1 ? results[0] : results;
   }
+  /**
+   * Returns a DOM selector for an element name contained within the module.
+   * @param {string} name
+   * @returns {string}
+   */
   getSelector(name) {
     return `[${this.elementPrefix}="${name}"]`;
   }
@@ -108,15 +152,26 @@ class App {
       console.error('Modu.App() is missing an "importMethod" option which is used to determine how to import modules.');
     }
   }
+  /**
+   * Initializes all modules that have a DOM element in the passed-in container
+   * @param {Element} containerEl    The HTML element to initialize modules within
+   */
   init(containerEl = document) {
     if (!containerEl)
       return console.warn("Modu.App.init() was passed an invalid container element.");
     const elements = this.getModuleElements(containerEl);
     this.initModulesForElements(elements);
   }
+  /**
+   * Destroy the app and all modules
+   */
   destroy() {
     this.destroyModules();
   }
+  /**
+   * Destroys all modules that have a DOM element in the passed-in container
+   * @param {Element} containerEl    The HTML element to destroy modules within
+   */
   destroyModules(containerEl = document) {
     if (!containerEl)
       return console.warn("Modu.App.destroyModules() was passed an invalid container element.");

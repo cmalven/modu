@@ -115,7 +115,9 @@ class Modu {
    */
   getData(name: string, el?: Element | null) {
     const searchElement = el ? el : this.el;
-    return searchElement.getAttribute(this.dataPrefix + name);
+    const value = searchElement.getAttribute(this.dataPrefix + name);
+    if (!isNaN(Number(value))) return Number(value); // Convert to a number of possible
+    return value;
   }
 
   /**

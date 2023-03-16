@@ -69,7 +69,7 @@ declare class Modu {
      * @param {Element} el   An optional child element to get the value on
      * @returns {string}
      */
-    getData(name: string, el?: Element | null): string | null;
+    getData(name: string, el?: Element | null): string | number | null;
     /**
      * Broadcast an event that can be listened for by other modules using `.on()`
      * @param {string} event         The name of the event
