@@ -116,8 +116,7 @@ class Modu {
   getData(name: string, el?: Element | null) {
     const searchElement = el ? el : this.el;
     const value = searchElement.getAttribute(this.dataPrefix + name);
-    if (!isNaN(Number(value))) return Number(value); // Convert to a number of possible
-    return value;
+    return Modu.convertStringValue(value);
   }
 
   /**
@@ -211,6 +210,30 @@ class Modu {
    */
   getSelector(name: string) {
     return `[${this.elementPrefix}="${name}"]`;
+  }
+    
+  static convertStringValue(value: string | null) {
+    // If value is empty, return null
+    if (value === null || value === '') {
+      return null;
+    }
+
+    // If the value is 'true' or 'false', convert it to a boolean
+    if (value && value.toLowerCase() === 'true') {
+      return true;
+    }
+
+    if (value && value.toLowerCase() === 'false') {
+      return false;
+    }
+
+    // If the value can be converted to a number, and it's not an empty string
+    if (value && !isNaN(Number(value)) && value !== '') {
+      return Number(value);
+    }
+
+    // Otherwise, return the value as-is
+    return value;
   }
 }
 

@@ -1,5 +1,5 @@
 import { describe, assert, it, expect, vi, beforeEach } from 'vitest';
-import { App, toKebabCase, toPascalCase } from '../index';
+import { Modu, App, toKebabCase, toPascalCase } from '../index';
 import { JSDOM } from 'jsdom';
 import * as initialModules from '../examples/modules/initial';
 
@@ -465,7 +465,30 @@ describe('Modu', () => {
       assert.equal(counterMoreSel, '[data-counter="more"]');
       assert.equal(displayCountSel, '[data-display="count"]');
     });
+  });
 
+  describe('static convertStringValue()', () => {
+    it('returns a string as is', async () => {
+      assert.equal(Modu.convertStringValue('my special string'), 'my special string');
+    });
+
+    it('converts a boolean string to a boolean', async () => {
+      assert.equal(Modu.convertStringValue('true'), true);
+      assert.equal(Modu.convertStringValue('false'), false);
+    });
+
+    it('converts a number string to a number', async () => {
+      assert.equal(Modu.convertStringValue('0'), 0);
+      assert.equal(Modu.convertStringValue('100'), 100);
+    });
+
+    it('returns a null value as is', async () => {
+      assert.equal(Modu.convertStringValue(null), null);
+    });
+
+    it('returns an empty value as null', async () => {
+      assert.equal(Modu.convertStringValue(''), null);
+    });
   });
 });
 

@@ -59,9 +59,7 @@ class Modu {
   getData(name, el) {
     const searchElement = el ? el : this.el;
     const value = searchElement.getAttribute(this.dataPrefix + name);
-    if (!isNaN(Number(value)))
-      return Number(value);
-    return value;
+    return Modu.convertStringValue(value);
   }
   /**
    * Broadcast an event that can be listened for by other modules using `.on()`
@@ -136,6 +134,21 @@ class Modu {
    */
   getSelector(name) {
     return `[${this.elementPrefix}="${name}"]`;
+  }
+  static convertStringValue(value) {
+    if (value === null || value === "") {
+      return null;
+    }
+    if (value && value.toLowerCase() === "true") {
+      return true;
+    }
+    if (value && value.toLowerCase() === "false") {
+      return false;
+    }
+    if (value && !isNaN(Number(value)) && value !== "") {
+      return Number(value);
+    }
+    return value;
   }
 }
 class App {
