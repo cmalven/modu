@@ -38,7 +38,7 @@ export type ModuOptions = {
 
 type ModuReadyPromise = Promise<void | Modu>;
 
-type CallbackData = any; // Allow any data to be passed to or returned from callbacks
+type CallbackData = unknown[] | unknown; // Allow any data to be passed to or returned from callbacks
 
 type ModuEventListener = {
   module: string,
@@ -193,7 +193,7 @@ class Modu {
       }
 
       // Always pass params as an array
-      if (params !== null && params.constructor !== Array) {
+      if (params !== null && !Array.isArray(params)) {
         params = [params];
       }
 
@@ -240,7 +240,7 @@ class Modu {
 class App {
   storage: StoredModu[] = [];
   prefix = 'data-module-';
-  modulesReady: Promise<any[]> | null = null;
+  modulesReady: Promise<unknown[]> | null = null;
   initialModules: AppInitialModules = {};
   importMethod: AppImportMethod;
 

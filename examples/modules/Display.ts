@@ -14,7 +14,8 @@ class Display extends Modu {
     this.on('Counter', 'change', this.update);
   }
 
-  update = (newValue: number) => {
+  update = (newValue: number | unknown) => {
+    if (typeof newValue !== 'number') throw new Error(`'update' method of 'Display' expected 'number', received ${typeof newValue}`);
     if (this.countEl) this.countEl.innerHTML = String(newValue);
     return true;
   };

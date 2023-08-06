@@ -336,12 +336,12 @@ describe('Modu', () => {
       const callbackStub = vi.fn();
       display.on('Counter', 'change', callbackStub);
 
-      counter.emit('change', 'hello');
-      counter.emit('change', 'modu');
+      counter.emit('change', 1);
+      counter.emit('change', 2);
       expect(callbackStub).toHaveBeenCalledTimes(2);
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore Seem to be inaccurate type definitions for vitest
-      assert.deepEqual(callbackStub.calls, [['hello'], ['modu']]);
+      assert.deepEqual(callbackStub.calls, [[1], [2]]);
     });
 
     it('does not respond to events emitted by itself', async () => {
@@ -351,7 +351,7 @@ describe('Modu', () => {
       const callbackStub = vi.fn();
       counter.on('Counter', 'change', callbackStub);
 
-      counter.emit('change', 'hello');
+      counter.emit('change', 33);
       expect(callbackStub).not.toHaveBeenCalled();
     });
   });
@@ -403,8 +403,8 @@ describe('Modu', () => {
       const displayTwoMethod = vi.spyOn(displayTwo, 'update');
 
       // Counter calls all displays
-      const result1 = counter.call('Display', 'update', 'all displays');
-      const result2 = counter.call('Display', 'update', 'main display', 'main');
+      const result1 = counter.call('Display', 'update', 33);
+      const result2 = counter.call('Display', 'update', 66, 'main');
 
       // Returns values
       assert.deepEqual(result1, [true, true]);
@@ -414,10 +414,10 @@ describe('Modu', () => {
       expect(displayTwoMethod).toHaveBeenCalledTimes(1);
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore Seem to be inaccurate type definitions for vitest
-      assert.deepEqual(displayOneMethod.calls, [['all displays'], ['main display']]);
+      assert.deepEqual(displayOneMethod.calls, [[33], [66]]);
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore Seem to be inaccurate type definitions for vitest
-      assert.deepEqual(displayTwoMethod.calls, [['all displays']]);
+      assert.deepEqual(displayTwoMethod.calls, [[33]]);
     });
 
     it('calling invalid methods', async () => {
