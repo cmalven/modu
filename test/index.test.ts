@@ -341,7 +341,7 @@ describe('Modu', () => {
       expect(callbackStub).toHaveBeenCalledTimes(2);
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore Seem to be inaccurate type definitions for vitest
-      assert.deepEqual(callbackStub.calls, [[1], [2]]);
+      assert.deepEqual(callbackStub.mock.calls, [[1], [2]]);
     });
 
     it('does not respond to events emitted by itself', async () => {
@@ -377,7 +377,7 @@ describe('Modu', () => {
       expect(callbackStub).toHaveBeenCalledTimes(2);
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore Seem to be inaccurate type definitions for vitest
-      assert.deepEqual(callbackStub.calls, [['hello'], ['modu']]);
+      assert.deepEqual(callbackStub.mock.calls, [['hello'], ['modu']]);
     });
   });
 
@@ -414,10 +414,10 @@ describe('Modu', () => {
       expect(displayTwoMethod).toHaveBeenCalledTimes(1);
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore Seem to be inaccurate type definitions for vitest
-      assert.deepEqual(displayOneMethod.calls, [[33], [66]]);
+      assert.deepEqual(displayOneMethod.mock.calls, [[33], [66]]);
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore Seem to be inaccurate type definitions for vitest
-      assert.deepEqual(displayTwoMethod.calls, [[33]]);
+      assert.deepEqual(displayTwoMethod.mock.calls, [[33]]);
     });
 
     it('calling invalid methods', async () => {
