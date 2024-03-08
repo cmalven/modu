@@ -104,6 +104,7 @@ declare class Modu {
      * @returns {string}
      */
     getSelector(name: string): string;
+    /** @private */
     static convertStringValue(value: string | null): string | number | boolean | null;
 }
 declare class App {
@@ -127,17 +128,25 @@ declare class App {
      * @param {Element} containerEl    The HTML element to destroy modules within
      */
     destroyModules(containerEl?: Element | Document | null): void;
+    /** @private */
     getModuleElements(containerEl?: Element | Document): Element[];
+    /** @private */
     initModulesForElements(elements: Element[]): void;
+    /** @private */
     destroyModulesForElements(elements: Element[]): void;
+    /** @private */
     initModules(element: Element): Promise<(void | Modu)[]>;
+    /** @private */
     addModule(ImportedModule: ModuConstructable, details: {
         element: Element;
         name: string;
         key?: string;
     }): Modu;
+    /** @private */
     getModuleNamesFromElement(element: Element): ModuleNames;
+    /** @private */
     getModulesForElement(element: Element, name?: string): StoredModu[];
+    /** @private */
     getModulesByName(name: string, key?: string): StoredModu[];
 }
 export { Modu, App };

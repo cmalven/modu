@@ -135,6 +135,7 @@ class Modu {
   getSelector(name) {
     return `[${this.elementPrefix}="${name}"]`;
   }
+  /** @private */
   static convertStringValue(value) {
     if (value === null || value === "") {
       return null;
@@ -191,6 +192,7 @@ class App {
     const elements = this.getModuleElements(containerEl);
     this.destroyModulesForElements(elements);
   }
+  /** @private */
   getModuleElements(containerEl = document) {
     const allElements = containerEl.querySelectorAll("*");
     return Array.from(allElements).filter((el) => {
@@ -200,12 +202,14 @@ class App {
       return true;
     });
   }
+  /** @private */
   initModulesForElements(elements) {
     const modulePromises = elements.map((el) => {
       return this.initModules(el);
     });
     this.modulesReady = Promise.allSettled(modulePromises);
   }
+  /** @private */
   destroyModulesForElements(elements) {
     let modulesToDestroy = [];
     elements.forEach((el) => {
@@ -225,6 +229,7 @@ class App {
       }
     }
   }
+  /** @private */
   initModules(element) {
     const readyPromises = [];
     const names = this.getModuleNamesFromElement(element);
@@ -253,6 +258,7 @@ class App {
     });
     return Promise.all(readyPromises);
   }
+  /** @private */
   addModule(ImportedModule, details) {
     const {
       element,
@@ -275,6 +281,7 @@ class App {
       module.init();
     return module;
   }
+  /** @private */
   getModuleNamesFromElement(element) {
     const results = [];
     Array.from(element.attributes).forEach((attr) => {
@@ -287,6 +294,7 @@ class App {
     });
     return results;
   }
+  /** @private */
   getModulesForElement(element, name) {
     return this.storage.filter((module) => {
       const isSameElement = module.el === element;
@@ -294,6 +302,7 @@ class App {
       return isSameElement && isSameName;
     });
   }
+  /** @private */
   getModulesByName(name, key) {
     return this.storage.filter((mod) => {
       const isSameName = toKebabCase(name) === toKebabCase(mod.name);

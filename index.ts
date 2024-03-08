@@ -213,7 +213,8 @@ class Modu {
   getSelector(name: string): string {
     return `[${this.elementPrefix}="${name}"]`;
   }
-    
+
+  /** @private */
   static convertStringValue(value: string | null): string | number | boolean | null {
     // If value is empty, return null
     if (value === null || value === '') {
@@ -289,6 +290,7 @@ class App {
     this.destroyModulesForElements(elements);
   }
 
+  /** @private */
   getModuleElements(containerEl: Element | Document = document): Element[] {
     const allElements = containerEl.querySelectorAll('*');
     return Array.from(allElements).filter(el => {
@@ -301,6 +303,7 @@ class App {
     });
   }
 
+  /** @private */
   initModulesForElements(elements: Element[]) {
     const modulePromises = elements.map(el => {
       return this.initModules(el);
@@ -309,6 +312,7 @@ class App {
     this.modulesReady = Promise.allSettled(modulePromises);
   }
 
+  /** @private */
   destroyModulesForElements(elements: Element[]) {
     let modulesToDestroy: StoredModu[] = [];
 
@@ -332,6 +336,7 @@ class App {
     }
   }
 
+  /** @private */
   initModules(element: Element): Promise<(void | Modu)[]> {
     const readyPromises: ModuReadyPromise[] = [];
 
@@ -373,6 +378,7 @@ class App {
     return Promise.all(readyPromises);
   }
 
+  /** @private */
   addModule(ImportedModule: ModuConstructable, details: {element: Element, name: string, key?: string }): Modu {
     const {
       element,
@@ -401,8 +407,7 @@ class App {
     return module;
   }
 
-
-
+  /** @private */
   getModuleNamesFromElement(element: Element): ModuleNames {
     const results: ModuleNames = [];
 
@@ -418,6 +423,7 @@ class App {
     return results;
   }
 
+  /** @private */
   getModulesForElement(element: Element, name?: string): StoredModu[] {
     return this.storage.filter(module => {
       const isSameElement = module.el === element;
@@ -426,6 +432,7 @@ class App {
     });
   }
 
+  /** @private */
   getModulesByName(name: string, key?: string): StoredModu[] {
     return this.storage.filter(mod => {
       const isSameName = toKebabCase(name) === toKebabCase(mod.name);
