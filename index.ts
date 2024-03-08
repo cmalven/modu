@@ -77,10 +77,14 @@ class Modu {
   key?: string;
   el: Element;
   app: App;
-  elementPrefix: string; /** @ignore */
-  dataPrefix: string; /** @ignore */
-  eventListeners: ModuEventListener[] = []; /** @ignore */
-  [methodKey: string]: unknown; /** @ignore */ // Necessary because module could have any method that is accessed via `.call()`
+  /** @ignore */
+  elementPrefix: string;
+  /** @ignore */
+  dataPrefix: string;
+  /** @ignore */
+  eventListeners: ModuEventListener[] = [];
+  /** @ignore */
+  [methodKey: string]: unknown; // Necessary because module could have any method that is accessed via `.call()`
 
   constructor(options: ModuOptions) {
     this.name = options.name;

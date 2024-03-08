@@ -23,9 +23,12 @@ class Modu {
     __publicField(this, "name");
     __publicField(this, "key");
     __publicField(this, "el");
-    __publicField(this, "elementPrefix");
-    __publicField(this, "dataPrefix");
     __publicField(this, "app");
+    /** @ignore */
+    __publicField(this, "elementPrefix");
+    /** @ignore */
+    __publicField(this, "dataPrefix");
+    /** @ignore */
     __publicField(this, "eventListeners", []);
     this.name = options.name;
     this.el = options.el;
@@ -99,10 +102,6 @@ class Modu {
       key
     });
   }
-  init() {
-  }
-  cleanup() {
-  }
   /**
    * Calls a method on another module
    * @param {string} moduleName                      The PascalCase name of the module to call
@@ -135,7 +134,19 @@ class Modu {
   getSelector(name) {
     return `[${this.elementPrefix}="${name}"]`;
   }
-  /** @private */
+  /**
+   * Automatically called when the module is ready. Do not call directly.
+   */
+  init() {
+  }
+  /**
+   * Automatically called when the module is destroyed. Do not call directly.
+   * Useful for tearing down event listeners, preventing memory leaks,
+   * and any other cleanup that needs to happen when the module is no longer used.
+   */
+  cleanup() {
+  }
+  /** @ignore */
   static convertStringValue(value) {
     if (value === null || value === "") {
       return null;
@@ -192,7 +203,7 @@ class App {
     const elements = this.getModuleElements(containerEl);
     this.destroyModulesForElements(elements);
   }
-  /** @private */
+  /** @ignore */
   getModuleElements(containerEl = document) {
     const allElements = containerEl.querySelectorAll("*");
     return Array.from(allElements).filter((el) => {
@@ -202,14 +213,14 @@ class App {
       return true;
     });
   }
-  /** @private */
+  /** @ignore */
   initModulesForElements(elements) {
     const modulePromises = elements.map((el) => {
       return this.initModules(el);
     });
     this.modulesReady = Promise.allSettled(modulePromises);
   }
-  /** @private */
+  /** @ignore */
   destroyModulesForElements(elements) {
     let modulesToDestroy = [];
     elements.forEach((el) => {
@@ -229,7 +240,7 @@ class App {
       }
     }
   }
-  /** @private */
+  /** @ignore */
   initModules(element) {
     const readyPromises = [];
     const names = this.getModuleNamesFromElement(element);
@@ -258,7 +269,7 @@ class App {
     });
     return Promise.all(readyPromises);
   }
-  /** @private */
+  /** @ignore */
   addModule(ImportedModule, details) {
     const {
       element,
@@ -281,7 +292,7 @@ class App {
       module.init();
     return module;
   }
-  /** @private */
+  /** @ignore */
   getModuleNamesFromElement(element) {
     const results = [];
     Array.from(element.attributes).forEach((attr) => {
@@ -294,7 +305,7 @@ class App {
     });
     return results;
   }
-  /** @private */
+  /** @ignore */
   getModulesForElement(element, name) {
     return this.storage.filter((module) => {
       const isSameElement = module.el === element;
@@ -302,7 +313,7 @@ class App {
       return isSameElement && isSameName;
     });
   }
-  /** @private */
+  /** @ignore */
   getModulesByName(name, key) {
     return this.storage.filter((mod) => {
       const isSameName = toKebabCase(name) === toKebabCase(mod.name);

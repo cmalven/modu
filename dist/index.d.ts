@@ -49,10 +49,14 @@ declare class Modu {
     name: string;
     key?: string;
     el: Element;
-    elementPrefix: string;
-    dataPrefix: string;
     app: App;
+    /** @ignore */
+    elementPrefix: string;
+    /** @ignore */
+    dataPrefix: string;
+    /** @ignore */
     eventListeners: ModuEventListener[];
+    /** @ignore */
     [methodKey: string]: unknown;
     constructor(options: ModuOptions);
     /**
@@ -88,8 +92,6 @@ declare class Modu {
      * @param {string} key           An optional key to scope events to
      */
     on(module: string, event: string, callback: (arg?: CallbackData) => CallbackData, key?: string): void;
-    init(): void;
-    cleanup(): void;
     /**
      * Calls a method on another module
      * @param {string} moduleName                      The PascalCase name of the module to call
@@ -104,7 +106,17 @@ declare class Modu {
      * @returns {string}
      */
     getSelector(name: string): string;
-    /** @private */
+    /**
+     * Automatically called when the module is ready. Do not call directly.
+     */
+    init(): void;
+    /**
+     * Automatically called when the module is destroyed. Do not call directly.
+     * Useful for tearing down event listeners, preventing memory leaks,
+     * and any other cleanup that needs to happen when the module is no longer used.
+     */
+    cleanup(): void;
+    /** @ignore */
     static convertStringValue(value: string | null): string | number | boolean | null;
 }
 declare class App {
@@ -128,25 +140,25 @@ declare class App {
      * @param {Element} containerEl    The HTML element to destroy modules within
      */
     destroyModules(containerEl?: Element | Document | null): void;
-    /** @private */
+    /** @ignore */
     getModuleElements(containerEl?: Element | Document): Element[];
-    /** @private */
+    /** @ignore */
     initModulesForElements(elements: Element[]): void;
-    /** @private */
+    /** @ignore */
     destroyModulesForElements(elements: Element[]): void;
-    /** @private */
+    /** @ignore */
     initModules(element: Element): Promise<(void | Modu)[]>;
-    /** @private */
+    /** @ignore */
     addModule(ImportedModule: ModuConstructable, details: {
         element: Element;
         name: string;
         key?: string;
     }): Modu;
-    /** @private */
+    /** @ignore */
     getModuleNamesFromElement(element: Element): ModuleNames;
-    /** @private */
+    /** @ignore */
     getModulesForElement(element: Element, name?: string): StoredModu[];
-    /** @private */
+    /** @ignore */
     getModulesByName(name: string, key?: string): StoredModu[];
 }
 export { Modu, App };
