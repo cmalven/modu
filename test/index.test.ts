@@ -28,7 +28,7 @@ const globalAny: any = global;
 
 const initApp = (containerEl = document) => {
   const app = new App({
-    importMethod: module => import('../examples/modules/' + module + '.js'),
+    importMethod: module => import(`../examples/modules/${module}.ts`),
   });
   app.init(containerEl);
   return app;
@@ -36,7 +36,7 @@ const initApp = (containerEl = document) => {
 
 const initAppInitial = () => {
   const app = new App({
-    importMethod: module => import('../examples/modules/' + module + '.js'),
+    importMethod: module => import(`../examples/modules/${module}.ts`),
     initialModules,
   });
   app.init();
@@ -317,6 +317,18 @@ describe('Modu', () => {
       const lessEl = counter.get('less');
       const childValue = counter.getData('child-value', lessEl);
       assert.equal(childValue, 'test');
+    });
+
+    it('fails to get data', async () => {
+      await app.modulesReady;
+      const counter = app.getModulesByName('counter')[0].module;
+      const val = counter.getData('foo');
+      assert.equal(val, null);
+
+      // Get a value on a child element
+      const lessEl = counter.get('less');
+      const childValue = counter.getData('foo', lessEl);
+      assert.equal(childValue, null);
     });
   });
 
