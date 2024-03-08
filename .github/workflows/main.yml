@@ -14,6 +14,8 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
+    - name: Publish package on JSR
+      run: npx jsr publish
     - uses: actions/setup-node@master
       with:
         node-version: '18.x'
@@ -28,5 +30,3 @@ jobs:
         npm publish --access public
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-    - name: Publish package on JSR
-      run: npx jsr publish
