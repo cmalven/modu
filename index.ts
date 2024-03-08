@@ -76,11 +76,11 @@ class Modu {
   name: string;
   key?: string;
   el: Element;
-  elementPrefix: string;
-  dataPrefix: string;
   app: App;
-  eventListeners: ModuEventListener[] = [];
-  [methodKey: string]: unknown; // Necessary because module could have any method that is accessed via `.call()`
+  elementPrefix: string; /** @ignore */
+  dataPrefix: string; /** @ignore */
+  eventListeners: ModuEventListener[] = []; /** @ignore */
+  [methodKey: string]: unknown; /** @ignore */ // Necessary because module could have any method that is accessed via `.call()`
 
   constructor(options: ModuOptions) {
     this.name = options.name;
@@ -164,14 +164,6 @@ class Modu {
     });
   }
 
-  init() {
-    // Handled by the module
-  }
-
-  cleanup() {
-    // Handled by the module
-  }
-
   /**
    * Calls a method on another module
    * @param {string} moduleName                      The PascalCase name of the module to call
@@ -212,6 +204,22 @@ class Modu {
    */
   getSelector(name: string): string {
     return `[${this.elementPrefix}="${name}"]`;
+  }
+
+  /**
+   * Automatically called when the module is ready. Do not call directly.
+   */
+  init() {
+    // Handled by the module
+  }
+
+  /**
+   * Automatically called when the module is destroyed. Do not call directly.
+   * Useful for tearing down event listeners, preventing memory leaks,
+   * and any other cleanup that needs to happen when the module is no longer used.
+   */
+  cleanup() {
+    // Handled by the module
   }
 
   /** @ignore */

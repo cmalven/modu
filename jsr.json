@@ -1,5 +1,5 @@
 {
   "name": "@malven/modu",
-  "version": "2.4.52",
+  "version": "2.4.6",
   "exports": "./index.ts"
 }
