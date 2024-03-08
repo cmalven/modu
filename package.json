@@ -1,6 +1,6 @@
 {
   "name": "@malven/modu",
-  "version": "2.4.3",
+  "version": "2.4.4",
   "description": "A simple, flexible system for working with DOM-based modules",
   "main": "./dist/modu.mjs",
   "types": "./dist/index.d.ts",
