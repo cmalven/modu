@@ -253,11 +253,16 @@ class Modu {
 }
 
 class App {
-  storage: StoredModu[] = [];
+  /** Prefix used to identify Modu modules in markup. Example: `<button data-module-button>Click Me</button>` */
   prefix = 'data-module-';
+  /** A promise that resolves when all modules on the page are ready to initialize. */
   modulesReady: Promise<unknown[]> | null = null;
+  /** Any modules to automatically load with the initial bundle. All others will be imported dynamically. */
   initialModules: AppInitialModules = {};
+  /** Method used for dynamic module imports. */
   importMethod: AppImportMethod;
+  /** @ignore */
+  storage: StoredModu[] = [];
 
   constructor(options: AppOptions) {
     this.initialModules = options.initialModules ?? {};
