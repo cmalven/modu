@@ -70,6 +70,8 @@ type StoredModu = {
   module: Modu
 }
 
+type ModuleNames = { name: string, key?: string }[]
+
 class Modu {
   name: string;
   key?: string;
@@ -103,7 +105,7 @@ class Modu {
    * @param {string} name
    * @returns {NodeListOf<ElementTagNameMap[string]> | NodeListOf<Element> | NodeListOf<SVGElementTagNameMap[string]>}
    */
-  getAll(name: string) {
+  getAll(name: string): NodeListOf<Element> {
     return this.el.querySelectorAll(`[${this.elementPrefix}="${name}"]`);
   }
 
@@ -113,7 +115,7 @@ class Modu {
    * @param {Element} el   An optional child element to get the value on
    * @returns {string}
    */
-  getData(name: string, el?: Element | null) {
+  getData(name: string, el?: Element | null): string | number | boolean | null {
     const searchElement = el ? el : this.el;
     const value = searchElement.getAttribute(this.dataPrefix + name);
     return Modu.convertStringValue(value);
@@ -177,7 +179,7 @@ class Modu {
    * @param {Object | string | number} params        Optional parameters to pass to the method. If an array is passed, each item in the array will be passed as a separate parameter. To pass an array as the only parameter, wrap it in double brackets, e.g. [[1, 2]]
    * @param {string} key                             An optional key to scope the module to
    */
-  call(moduleName: string, method: string, params: CallbackData = [], key?: string) {
+  call(moduleName: string, method: string, params: CallbackData = [], key?: string): unknown {
     // Get all modules that match the name and key
     const modules = this.app.getModulesByName(moduleName, key);
     const results: CallbackData[] = [];
@@ -208,11 +210,11 @@ class Modu {
    * @param {string} name
    * @returns {string}
    */
-  getSelector(name: string) {
+  getSelector(name: string): string {
     return `[${this.elementPrefix}="${name}"]`;
   }
     
-  static convertStringValue(value: string | null) {
+  static convertStringValue(value: string | null): string | number | boolean | null {
     // If value is empty, return null
     if (value === null || value === '') {
       return null;
@@ -258,7 +260,7 @@ class App {
    * Initializes all modules that have a DOM element in the passed-in container
    * @param {Element} containerEl    The HTML element to initialize modules within
    */
-  init(containerEl: Element | Document | null = document) {
+  init(containerEl: Element | Document | null = document): void {
     if (!containerEl) return console.warn('Modu.App.init() was passed an invalid container element.');
 
     const elements = this.getModuleElements(containerEl);
@@ -278,7 +280,7 @@ class App {
    * Destroys all modules that have a DOM element in the passed-in container
    * @param {Element} containerEl    The HTML element to destroy modules within
    */
-  destroyModules(containerEl: Element | Document | null = document) {
+  destroyModules(containerEl: Element | Document | null = document): void {
     if (!containerEl) return console.warn('Modu.App.destroyModules() was passed an invalid container element.');
 
     const elements = this.getModuleElements(containerEl);
@@ -330,7 +332,7 @@ class App {
     }
   }
 
-  initModules(element: Element) {
+  initModules(element: Element): Promise<(void | Modu)[]> {
     const readyPromises: ModuReadyPromise[] = [];
 
     // Get all names for the element
@@ -371,7 +373,7 @@ class App {
     return Promise.all(readyPromises);
   }
 
-  addModule(ImportedModule: ModuConstructable, details: {element: Element, name: string, key?: string }) {
+  addModule(ImportedModule: ModuConstructable, details: {element: Element, name: string, key?: string }): Modu {
     const {
       element,
       name,
@@ -399,8 +401,10 @@ class App {
     return module;
   }
 
-  getModuleNamesFromElement(element: Element) {
-    const results: { name: string, key?: string }[] = [];
+
+
+  getModuleNamesFromElement(element: Element): ModuleNames {
+    const results: ModuleNames = [];
 
     Array.from(element.attributes).forEach(attr => {
       if (attr.name.startsWith(this.prefix)) {

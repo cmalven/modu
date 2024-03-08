@@ -14,7 +14,7 @@ export declare type ModuOptions = {
     el: Element;
     app: App;
 };
-declare type CallbackData = any;
+declare type CallbackData = unknown[] | unknown;
 declare type ModuEventListener = {
     module: string;
     event: string;
@@ -41,6 +41,10 @@ declare type StoredModu = {
     el: Element;
     module: Modu;
 };
+declare type ModuleNames = {
+    name: string;
+    key?: string;
+}[];
 declare class Modu {
     name: string;
     key?: string;
@@ -93,7 +97,7 @@ declare class Modu {
      * @param {Object | string | number} params        Optional parameters to pass to the method. If an array is passed, each item in the array will be passed as a separate parameter. To pass an array as the only parameter, wrap it in double brackets, e.g. [[1, 2]]
      * @param {string} key                             An optional key to scope the module to
      */
-    call(moduleName: string, method: string, params?: CallbackData, key?: string): any;
+    call(moduleName: string, method: string, params?: CallbackData, key?: string): unknown;
     /**
      * Returns a DOM selector for an element name contained within the module.
      * @param {string} name
@@ -105,7 +109,7 @@ declare class Modu {
 declare class App {
     storage: StoredModu[];
     prefix: string;
-    modulesReady: Promise<any[]> | null;
+    modulesReady: Promise<unknown[]> | null;
     initialModules: AppInitialModules;
     importMethod: AppImportMethod;
     constructor(options: AppOptions);
@@ -132,10 +136,7 @@ declare class App {
         name: string;
         key?: string;
     }): Modu;
-    getModuleNamesFromElement(element: Element): {
-        name: string;
-        key?: string | undefined;
-    }[];
+    getModuleNamesFromElement(element: Element): ModuleNames;
     getModulesForElement(element: Element, name?: string): StoredModu[];
     getModulesByName(name: string, key?: string): StoredModu[];
 }

@@ -120,7 +120,7 @@ class Modu {
       if (typeof moduleMethod !== "function") {
         return console.error(`Failed to call non-existent method "${method}" on module "${module.name}"`);
       }
-      if (params !== null && params.constructor !== Array) {
+      if (params !== null && !Array.isArray(params)) {
         params = [params];
       }
       results.push(moduleMethod.apply(module, params));
