@@ -332,7 +332,7 @@ describe('Modu', () => {
     });
   });
 
-  describe('on() and emit()', () => {
+  describe('on() and emit() and off()', () => {
     let app: App;
 
     beforeEach(() => {
@@ -354,6 +354,11 @@ describe('Modu', () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore Seem to be inaccurate type definitions for vitest
       assert.deepEqual(callbackStub.mock.calls, [[1], [2]]);
+
+      // Off
+      display.off('Counter', 'change', callbackStub);
+      counter.emit('change', 1);
+      expect(callbackStub).toHaveBeenCalledTimes(2);
     });
 
     it('does not respond to events emitted by itself', async () => {

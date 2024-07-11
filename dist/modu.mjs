@@ -103,6 +103,26 @@ class Modu {
     });
   }
   /**
+   * Remove a listener for events fired in another module using `.emit()`
+   * @param {string} module        The pascal-cased name of the module to listen to
+   * @param {string} event         The name of the event to listen for
+   * @param {function} callback    The callback function to fire when the event is heard. Will receive any event data as the first and only parameter.
+   * @param {string} key           An optional key to scope events to
+   */
+  off(module, event, callback, key) {
+    this.eventListeners = this.eventListeners.filter((listener) => {
+      if (listener.module !== module)
+        return true;
+      if (listener.event !== event)
+        return true;
+      if (listener.callback !== callback)
+        return true;
+      if (listener.key !== key)
+        return true;
+      return false;
+    });
+  }
+  /**
    * Calls a method on another module
    * @param {string} moduleName                      The PascalCase name of the module to call
    * @param {string} method                          The name of the method to call
@@ -165,11 +185,16 @@ class Modu {
 }
 class App {
   constructor(options) {
-    __publicField(this, "storage", []);
+    /** Prefix used to identify Modu modules in markup. Example: `<button data-module-button>Click Me</button>` */
     __publicField(this, "prefix", "data-module-");
+    /** A promise that resolves when all modules on the page are ready to initialize. */
     __publicField(this, "modulesReady", null);
+    /** Any modules to automatically load with the initial bundle. All others will be imported dynamically. */
     __publicField(this, "initialModules", {});
+    /** Method used for dynamic module imports. */
     __publicField(this, "importMethod");
+    /** @ignore */
+    __publicField(this, "storage", []);
     var _a;
     this.initialModules = (_a = options.initialModules) != null ? _a : {};
     this.importMethod = options.importMethod;
@@ -178,9 +203,9 @@ class App {
     }
   }
   /**
-   * Initializes all modules that have a DOM element in the passed-in container
-   * @param {Element} containerEl    The HTML element to initialize modules within
-   */
+     * Initializes all modules that have a DOM element in the passed-in container
+     * @param {Element} containerEl    The HTML element to initialize modules within
+     */
   init(containerEl = document) {
     if (!containerEl)
       return console.warn("Modu.App.init() was passed an invalid container element.");
@@ -188,15 +213,15 @@ class App {
     this.initModulesForElements(elements);
   }
   /**
-   * Destroy the app and all modules
-   */
+     * Destroy the app and all modules
+     */
   destroy() {
     this.destroyModules();
   }
   /**
-   * Destroys all modules that have a DOM element in the passed-in container
-   * @param {Element} containerEl    The HTML element to destroy modules within
-   */
+     * Destroys all modules that have a DOM element in the passed-in container
+     * @param {Element} containerEl    The HTML element to destroy modules within
+     */
   destroyModules(containerEl = document) {
     if (!containerEl)
       return console.warn("Modu.App.destroyModules() was passed an invalid container element.");

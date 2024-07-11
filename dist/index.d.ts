@@ -1,4 +1,20 @@
 /**
+ * @module
+ *
+ * Modu provides a simple system for working with DOM-based modules that is powerful and flexible.
+ *
+ * https://modu.malven.co
+ *
+ * ```ts
+ * import { App } from '@malven/modu';
+ *
+ * const app = new App({
+ *   importMethod: module => import(`./modules/${module}.js`),
+ * });
+ * app.init();
+ * ```
+ */
+/**
  * Converts name of a module to kebab case
  * @param {string} name
  */
@@ -93,6 +109,14 @@ declare class Modu {
      */
     on(module: string, event: string, callback: (arg?: CallbackData) => CallbackData, key?: string): void;
     /**
+     * Remove a listener for events fired in another module using `.emit()`
+     * @param {string} module        The pascal-cased name of the module to listen to
+     * @param {string} event         The name of the event to listen for
+     * @param {function} callback    The callback function to fire when the event is heard. Will receive any event data as the first and only parameter.
+     * @param {string} key           An optional key to scope events to
+     */
+    off(module: string, event: string, callback: (arg?: CallbackData) => CallbackData, key?: string): void;
+    /**
      * Calls a method on another module
      * @param {string} moduleName                      The PascalCase name of the module to call
      * @param {string} method                          The name of the method to call
@@ -120,25 +144,30 @@ declare class Modu {
     static convertStringValue(value: string | null): string | number | boolean | null;
 }
 declare class App {
-    storage: StoredModu[];
+    /** Prefix used to identify Modu modules in markup. Example: `<button data-module-button>Click Me</button>` */
     prefix: string;
+    /** A promise that resolves when all modules on the page are ready to initialize. */
     modulesReady: Promise<unknown[]> | null;
+    /** Any modules to automatically load with the initial bundle. All others will be imported dynamically. */
     initialModules: AppInitialModules;
+    /** Method used for dynamic module imports. */
     importMethod: AppImportMethod;
+    /** @ignore */
+    storage: StoredModu[];
     constructor(options: AppOptions);
     /**
-     * Initializes all modules that have a DOM element in the passed-in container
-     * @param {Element} containerEl    The HTML element to initialize modules within
-     */
+       * Initializes all modules that have a DOM element in the passed-in container
+       * @param {Element} containerEl    The HTML element to initialize modules within
+       */
     init(containerEl?: Element | Document | null): void;
     /**
-     * Destroy the app and all modules
-     */
+       * Destroy the app and all modules
+       */
     destroy(): void;
     /**
-     * Destroys all modules that have a DOM element in the passed-in container
-     * @param {Element} containerEl    The HTML element to destroy modules within
-     */
+       * Destroys all modules that have a DOM element in the passed-in container
+       * @param {Element} containerEl    The HTML element to destroy modules within
+       */
     destroyModules(containerEl?: Element | Document | null): void;
     /** @ignore */
     getModuleElements(containerEl?: Element | Document): Element[];

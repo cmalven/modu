@@ -187,6 +187,23 @@ class Modu {
     }
 
     /**
+     * Remove a listener for events fired in another module using `.emit()`
+     * @param {string} module        The pascal-cased name of the module to listen to
+     * @param {string} event         The name of the event to listen for
+     * @param {function} callback    The callback function to fire when the event is heard. Will receive any event data as the first and only parameter.
+     * @param {string} key           An optional key to scope events to
+     */
+    off(module: string, event: string, callback: (arg?: CallbackData) => CallbackData, key?: string) {
+      this.eventListeners = this.eventListeners.filter(listener => {
+        if (listener.module !== module) return true;
+        if (listener.event !== event) return true;
+        if (listener.callback !== callback) return true;
+        if (listener.key !== key) return true;
+        return false;
+      });
+    }
+
+    /**
      * Calls a method on another module
      * @param {string} moduleName                      The PascalCase name of the module to call
      * @param {string} method                          The name of the method to call
